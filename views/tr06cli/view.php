@@ -15,8 +15,8 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a(Yii::t('app', 'Update'), ['update', 'idp_06in' => $model->idp_06in, 'ncl_06in' => $model->ncl_06in], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a(Yii::t('app', 'Delete'), ['delete', 'idp_06in' => $model->idp_06in, 'ncl_06in' => $model->ncl_06in], [
+        <?= Html::a(Yii::t('app', 'Actualizar'), ['update', 'idp_06in' => $model->idp_06in, 'ncl_06in' => $model->ncl_06in], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a(Yii::t('app', 'Eliminar'), ['delete', 'idp_06in' => $model->idp_06in, 'ncl_06in' => $model->ncl_06in], [
             'class' => 'btn btn-danger',
             'data' => [
                 'confirm' => Yii::t('app', 'Desea eliminar este registro?'),

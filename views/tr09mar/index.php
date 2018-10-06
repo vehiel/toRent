@@ -7,7 +7,7 @@ use yii\grid\GridView;
 /* @var $searchModel app\models\search\Tr09marSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', 'Tr09mars');
+$this->title = Yii::t('app', 'Marcas');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="tr09mar-index">
@@ -16,7 +16,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <p>
-        <?= Html::a(Yii::t('app', 'Create Tr09mar'), ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a(Yii::t('app', 'Crear Marca'), ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
     <?= GridView::widget([
@@ -27,7 +27,18 @@ $this->params['breadcrumbs'][] = $this->title;
 
             'cgm_09in',
             'nom_09vc',
-            'est_09in',
+            [
+              'attribute'=>'est_09in',
+              'filter'=>Html::activeDropDownList($searchModel, 'est_09in',
+              ['1'=>'Activo','0'=>'Inactivo'],['class' => 'form-control','prompt' => 'Todos']),
+              'value'=>  function($model){
+                if($model->est_09in == 1){
+                  return "Activo";
+                }else{
+                  return "Inactivo";
+                }
+              }
+            ],
 
             ['class' => 'yii\grid\ActionColumn'],
         ],

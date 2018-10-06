@@ -9,13 +9,12 @@ use kartik\date\DatePicker;
 /* @var $this yii\web\View */
 /* @var $model app\models\Tr06cli */
 /* @var $form yii\widgets\ActiveForm */
-if($model->isNewRecord){
-    $accion = "create";
-    //echo "<h1>new</h1>";
-}else{
- $accion = "update";
-     //echo "<h1>update</h1>";
-}
+/*si se utilizan modals se debe poner la siguiente sentencia, por la vara de los id unicos en los select2*/
+// if($model->isNewRecord){
+//     $accion = "create";
+// }else{
+//  $accion = "update";
+// }
 ?>
 
 <div class="tr06cli-form">
@@ -69,7 +68,7 @@ if($model->isNewRecord){
         ],
         ]) ?>
         <?= $form->field($model, 'con_02vc')->textInput(['maxlength' => true, 'value'=>'torent2018', 'readonly'=>true]) ?>
-        
+
       <?= $form->field($model, 'obs_06vc')->textArea(['maxlength' => true]) ?>
     </div>
     <div class="form-group col-lg-6 col-lg-12">

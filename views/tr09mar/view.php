@@ -7,7 +7,7 @@ use yii\widgets\DetailView;
 /* @var $model app\models\Tr09mar */
 
 $this->title = $model->cgm_09in;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Tr09mars'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Marcas'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="tr09mar-view">
@@ -15,11 +15,11 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->cgm_09in], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a(Yii::t('app', 'Delete'), ['delete', 'id' => $model->cgm_09in], [
+        <?= Html::a(Yii::t('app', 'Actualizar'), ['update', 'id' => $model->cgm_09in], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a(Yii::t('app', 'Eliminar'), ['delete', 'id' => $model->cgm_09in], [
             'class' => 'btn btn-danger',
             'data' => [
-                'confirm' => Yii::t('app', 'Are you sure you want to delete this item?'),
+                'confirm' => Yii::t('app', 'Esta seguro que desea eliminar este registro?'),
                 'method' => 'post',
             ],
         ]) ?>
@@ -30,7 +30,18 @@ $this->params['breadcrumbs'][] = $this->title;
         'attributes' => [
             'cgm_09in',
             'nom_09vc',
-            'est_09in',
+            [
+              'attribute'=>'est_09in',
+              'value'=>function($model){
+                if($model->est_09in == 1){
+                  return "Activo";
+                }elseif($model->est_09in == 0){
+                  return "Inactivo";
+                }else{
+                  return "No definido";
+                }
+              }
+            ],
         ],
     ]) ?>
 
