@@ -60,7 +60,6 @@ class Tr02usuSearch extends Tr02usu
         // grid filtering conditions
         $query->andFilterWhere([
             'nus_02in' => $this->nus_02in,
-            'idp_02in' => $this->idp_02in,
             'est_02in' => $this->est_02in,
             'idr_03in' => $this->idr_03in,
             'gen_02in' => $this->gen_02in,
@@ -75,7 +74,8 @@ class Tr02usuSearch extends Tr02usu
             ->andFilterWhere(['like', 'ema_02vc', $this->ema_02vc])
             ->andFilterWhere(['like', 'dir_02vc', $this->dir_02vc])
             ->andFilterWhere(['like', 'ncu_02vc', $this->ncu_02vc])
-            ->andFilterWhere(['like', 'nac_02vc', $this->nac_02vc]);
+            ->andFilterWhere(['like', 'nac_02vc', $this->nac_02vc])
+            ->andFilterWhere(['like', 'idp_02in', $this->idp_02in]);
 
         return $dataProvider;
     }

@@ -59,7 +59,6 @@ class Tr06cliSearch extends Tr06cli
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'idp_06in' => $this->idp_06in,
             'ncl_06in' => $this->ncl_06in,
             'emo_06in' => $this->emo_06in,
             'gen_06in' => $this->gen_06in,
@@ -75,7 +74,8 @@ class Tr06cliSearch extends Tr06cli
             ->andFilterWhere(['like', 'ema_06vc', $this->ema_06vc])
             ->andFilterWhere(['like', 'dir_06vc', $this->dir_06vc])
             ->andFilterWhere(['like', 'ncu_06vc', $this->ncu_06vc])
-            ->andFilterWhere(['like', 'nac_06vc', $this->nac_06vc]);
+            ->andFilterWhere(['like', 'nac_06vc', $this->nac_06vc])
+            ->andFilterWhere(['like', 'idp_06in', $this->idp_06in]);
 
         return $dataProvider;
     }

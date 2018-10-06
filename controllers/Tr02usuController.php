@@ -98,7 +98,9 @@ class Tr02usuController extends Controller
 
     if ($model->load(Yii::$app->request->post())) {
       $model->fna_02dt = date('Y-m-d', strtotime($model->fna_02dt));
-      return $this->redirect(['view', 'nus_02in' => $model->nus_02in, 'idp_02in' => $model->idp_02in]);
+      if($model->save()){
+        return $this->redirect(['view', 'nus_02in' => $model->nus_02in, 'idp_02in' => $model->idp_02in]);
+      }
     }
 
     return $this->render('update', [
