@@ -66,8 +66,11 @@ class Tr10herController extends Controller
     {
         $model = new Tr10her();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post())) {
+          $model->alq_10in = 0;
+          if($model->save()){
             return $this->redirect(['view', 'id' => $model->chr_10in]);
+          }
         }
 
         return $this->render('create', [

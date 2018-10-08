@@ -7,7 +7,7 @@ use yii\grid\GridView;
 /* @var $searchModel app\models\search\Tr10herSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', 'Tr10hers');
+$this->title = Yii::t('app', 'Herramientas');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="tr10her-index">
@@ -16,7 +16,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <p>
-        <?= Html::a(Yii::t('app', 'Create Tr10her'), ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a(Yii::t('app', 'Crear Herramienta'), ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
     <?= GridView::widget([
@@ -33,7 +33,7 @@ $this->params['breadcrumbs'][] = $this->title;
             //'vut_10in',
             //'gar_10in',
             //'tip_10in',
-            //'est_10in',
+            'est_10in',
             //'alq_10in',
 
             ['class' => 'yii\grid\ActionColumn'],
