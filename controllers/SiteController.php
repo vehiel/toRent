@@ -77,7 +77,17 @@ class SiteController extends Controller
 
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
+          if(isset(Yii::$app->user->identity->idp_02in)){
+            echo '<script>console.log("idp_02in: '.Yii::$app->user->identity->idp_02in.'");</script>';
+          }else{
+              echo '<script>console.log("idp_02in: no existes");</script>';
+          }
+          if (Yii::$app->user->isGuest) {
+            echo '<script>console.log("el un pinche invitado");</script>';
+          }else{
+            echo '<script>console.log("esta registrado");</script>';
+          }
+            //return $this->goBack();
         }
 
         $model->password = '';
