@@ -1,5 +1,7 @@
 <?php
 
+use app\models\Tr09mar;
+use app\models\Tr08nhr;
 use yii\helpers\Html;
 use yii\grid\GridView;
 
@@ -26,15 +28,54 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\SerialColumn'],
 
             'chr_10in',
-            'idn_08in',
-            'cgm_09in',
-            'vol_10in',
+
+            [
+              'attribute'=>'idn_08in',
+              'value'=> function($model){
+                $nombre = Tr08nhr::findOne($model->idn_08in);
+                if(@$nombre){
+                  return $nombre->nom_08vc;
+                }else{
+                  return "No Definido";
+                }
+              }
+            ],
+            [
+              'attribute'=>'cgm_09in',
+              'value'=> function($model){
+                $marca = Tr09mar::findOne($model->cgm_09in);
+                if(@$marca){
+                  return $marca->nom_09vc;
+                }else{
+                  return "No Definido";
+                }
+              }
+            ],
+            [
+              'attribute'=>'vol_10in',
+              'value'=> function($model){
+                if ($model->vol_10in == 1){
+                  return "110";
+                }elseif ($model->vol_10in == 2) {
+                  return "220";
+                }else{
+                  return "No aplica";
+                }
+              }
+            ],
             'des_10vc',
-            //'vut_10in',
-            //'gar_10in',
-            //'tip_10in',
-            'est_10in',
-            //'alq_10in',
+            [
+              'attribute'=>'est_10in',
+              'filter'=>Html::activeDropDownList($searchModel, 'est_10in',
+              ['1'=>'Activo','0'=>'Inactivo'],['class' => 'form-control','prompt' => 'Todos']),
+              'value'=>  function($model){
+                if($model->est_10in == 1){
+                  return "Activo";
+                }else{
+                  return "Inactivo";
+                }
+              }
+            ],
 
             ['class' => 'yii\grid\ActionColumn'],
         ],

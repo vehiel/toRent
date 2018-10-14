@@ -44,6 +44,7 @@ AppAsset::register($this);
               ['label' => 'Usuario', 'url' => ['tr02usu/index']],
               ['label' => 'Cliente', 'url' => ['tr06cli/index']],
               ['label' => 'Marca', 'url' => ['tr09mar/index']],
+              ['label' => 'Herramienta', 'url' => ['tr10her/index']],
             Yii::$app->user->isGuest ? (
                 ['label' => 'Login', 'url' => ['/site/login']]
             ) : (

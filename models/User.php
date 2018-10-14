@@ -2,30 +2,21 @@
 
 namespace app\models;
 
-class User extends \yii\base\BaseObject implements \yii\web\IdentityInterface
-{
-    public $id;
-    public $username;
-    public $password;
-    public $authKey;
-    public $accessToken;
+use yii\db\ActiveRecord;
 
-    private static $users = [
-        '100' => [
-            'id' => '100',
-            'username' => 'admin',
-            'password' => 'admin',
-            'authKey' => 'test100key',
-            'accessToken' => '100-token',
-        ],
-        '101' => [
-            'id' => '101',
-            'username' => 'demo',
-            'password' => 'demo',
-            'authKey' => 'test101key',
-            'accessToken' => '101-token',
-        ],
-    ];
+class User extends ActiveRecord implements \yii\web\IdentityInterface
+{
+    /*se pone el % porque usa un prefix*/
+    public static function tableName()
+    {
+        return '{{%usuario}}';
+    }
+    /*se agregan las reglas que se ocupen, puede ser direntes a el modelo Usuario que tambien usa la misma tabla*/
+    public function rules()
+    {
+        return [
+        ];
+    }
 
 
     /**
