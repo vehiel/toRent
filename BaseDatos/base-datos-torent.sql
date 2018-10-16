@@ -137,11 +137,12 @@ idn_08in INT(10) NOT NULL COMMENT 'Id nombre herramienta',
 cgm_09in INT(10) NOT NULL COMMENT 'Código de marca',
 vol_10in INT(5) NOT NULL COMMENT 'Voltaje',
 des_10vc VARCHAR(100) NOT NULL COMMENT 'Descripcion',
-vut_10in INT(5) NOT NULL COMMENT 'Vida util años',
-gar_10in INT(5) NOT NULL COMMENT 'Garantía en meses',
+vut_10in INT(5) NOT NULL COMMENT 'Años vida util',
+gar_10in INT(5) NOT NULL COMMENT 'Meses de Garantía',
 tip_10in INT(5) NOT NULL COMMENT 'Tipo', /*los tipos tambien son int*/
 est_10in INT(5) NOT NULL COMMENT 'Estado de la herramienta',
-alq_10in INT(5) NOT NULL COMMENT 'Alquilada'
+alq_10in INT(5) NOT NULL COMMENT 'Alquilada',
+ser_10vc VARCHAR(50) NULL COMMENT 'Serial'
 )
 CHARACTER SET utf8,
 COLLATE utf8_unicode_ci,

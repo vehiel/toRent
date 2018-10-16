@@ -8,6 +8,7 @@ use app\models\search\Tr10herSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
 
 /**
  * Tr10herController implements the CRUD actions for Tr10her model.
@@ -20,6 +21,18 @@ class Tr10herController extends Controller
     public function behaviors()
     {
         return [
+          'access'=>[
+            'class'=>AccessControl::className(),
+            'only'=>['index','view','update','create','delete'],
+            'rules'=>[
+              [
+                'actions'=>['view','create','update','delete','index'],
+                'allow'=>true,
+                'roles'=>['@'],
+
+              ],
+            ],
+          ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
@@ -66,8 +79,11 @@ class Tr10herController extends Controller
     {
         $model = new Tr10her();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post())) {
+          $model->alq_10in = 0;
+          if($model->save()){
             return $this->redirect(['view', 'id' => $model->chr_10in]);
+          }
         }
 
         return $this->render('create', [

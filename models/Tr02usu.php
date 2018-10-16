@@ -4,6 +4,8 @@ namespace app\models;
 
 use Yii;
 
+use yii\web\IdentityInterface;
+
 /**
  * This is the model class for table "tr02usu".
  *
@@ -27,7 +29,7 @@ use Yii;
  * @property Tr04pri[] $p04ins
  * @property Tr11alq[] $tr11alqs
  */
-class Tr02usu extends \yii\db\ActiveRecord
+class Tr02usu extends \yii\db\ActiveRecord implements IdentityInterface
 {
     /**
      * {@inheritdoc}
@@ -99,5 +101,78 @@ class Tr02usu extends \yii\db\ActiveRecord
     public function getTr11alqs()
     {
         return $this->hasMany(Tr11alq::className(), ['nus_02in' => 'nus_02in']);
+    }
+
+
+/**************************************************** metodo de IdentityInterface ************************************/
+
+/*se cambias los atributos para que coincidan con los de la base de datos*/
+    public static function findIdentity($id)
+    {
+      $user = $this->findOne(['nus_02in'=>$id]);
+      // return isset($user)? $r ='<script>console.log("si existe el usuario con este id: '.$id.'");</script>':'<script>console.log("NO existe id: '.$id.'");</script>');
+      return isset($user)? new static($user):null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function findIdentityByAccessToken($token, $type = null)
+    {
+        foreach (self::$users as $user) {
+            if ($user['accessToken'] === $token) {
+                return new static($user);
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Finds user by username
+     *
+     * @param string $username
+     * @return static|null
+     */
+     /*el username es la cedula*/
+    public static function findByUsername($username)
+    {
+         return static::findOne(['idp_02in' => $username]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getId()
+    {
+        return $this->getPrimaryKey();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAuthKey()
+    {
+        return $this->authKey;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function validateAuthKey($authKey)
+    {
+        return $this->authKey === $authKey;
+    }
+
+    /**
+     * Validates password
+     *
+     * @param string $password password to validate
+     * @return bool if password provided is valid for current user
+     */
+     /*se modifica para que coincida con los atributos de la base de datos*/
+    public function validatePassword($password)
+    {
+        return Yii::$app->security->validatePassword($password, $this->con_02vc);
     }
 }

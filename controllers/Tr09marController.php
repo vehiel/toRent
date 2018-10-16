@@ -8,6 +8,7 @@ use app\models\search\Tr09marSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
 
 /**
  * Tr09marController implements the CRUD actions for Tr09mar model.
@@ -20,6 +21,18 @@ class Tr09marController extends Controller
     public function behaviors()
     {
         return [
+          'access'=>[
+            'class'=>AccessControl::className(),
+            'only'=>['index','view','update','create','delete'],
+            'rules'=>[
+              [
+                'actions'=>['view','create','update','delete','index'],
+                'allow'=>true,
+                'roles'=>['@'],
+
+              ],
+            ],
+          ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [

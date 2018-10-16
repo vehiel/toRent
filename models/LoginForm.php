@@ -28,6 +28,8 @@ class LoginForm extends Model
         return [
             // username and password are both required
             [['username', 'password'], 'required'],
+            /*el usuario es el numero de cedula, entonces es integer*/
+            ['username','integer'],
             // rememberMe must be a boolean value
             ['rememberMe', 'boolean'],
             // password is validated by validatePassword()
@@ -35,6 +37,13 @@ class LoginForm extends Model
         ];
     }
 
+    public function attributeLabels()
+{
+    return [
+        'username' => Yii::t('app', 'Usuario'),
+        'password' => Yii::t('app', 'Contraseña'),
+    ];
+}
     /**
      * Validates the password.
      * This method serves as the inline validation for password.
@@ -60,7 +69,7 @@ class LoginForm extends Model
     public function login()
     {
         if ($this->validate()) {
-            return Yii::$app->user->login($this->getUser(), $this->rememberMe ? 3600*24*30 : 0);
+            return Yii::$app->user->login($this->getUser(), $this->rememberMe ? 0*0*0 : 0);
         }
         return false;
     }
@@ -73,9 +82,11 @@ class LoginForm extends Model
     public function getUser()
     {
         if ($this->_user === false) {
-            $this->_user = User::findByUsername($this->username);
-        }
+          /*usa el modelo de usuario que tiene el acceso a la base de datos para validar el usuario y la contraseña, esta clase debe inplementar IdentityInterface*/
 
+            $this->_user = User::findByUsername($this->username);
+            echo '<script>console.log("Fin");</script>';
+        }
         return $this->_user;
     }
 }

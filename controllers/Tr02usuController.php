@@ -8,6 +8,7 @@ use app\models\search\Tr02usuSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
 
 /**
 * Tr02usuController implements the CRUD actions for Tr02usu model.
@@ -20,6 +21,18 @@ class Tr02usuController extends Controller
   public function behaviors()
   {
     return [
+      'access'=>[
+        'class'=>AccessControl::className(),
+        'only'=>['index','view','update','create','delete'],
+        'rules'=>[
+          [
+            'actions'=>['view','create','update','delete','index'],
+            'allow'=>true,
+            'roles'=>['@'],
+
+          ],
+        ],
+      ],
       'verbs' => [
         'class' => VerbFilter::className(),
         'actions' => [
