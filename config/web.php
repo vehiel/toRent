@@ -23,6 +23,11 @@ $config = [
             'identityClass' => 'app\models\User',
             'enableAutoLogin' => true,
         ],
+        'userCliente' => [
+            'identityClass' => 'app\models\UserCliente',
+            'enableAutoLogin' => false,
+            'class' => 'yii\web\User',
+        ],
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
