@@ -67,7 +67,7 @@ use kartik\date\DatePicker;
           'allowClear' => true
         ],
         ]) ?>
-        <?= $form->field($model, 'con_02vc')->textInput(['maxlength' => true, 'value'=>'torent2018', 'readonly'=>true]) ?>
+        <?= $form->field($model, 'con_06vc')->textInput(['maxlength' => true, 'value'=>'torent2018', 'readonly'=>true]) ?>
 
       <?= $form->field($model, 'obs_06vc')->textArea(['maxlength' => true]) ?>
     </div>

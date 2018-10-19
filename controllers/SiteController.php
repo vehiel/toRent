@@ -8,6 +8,7 @@ use yii\web\Controller;
 use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
+use app\models\LoginFormCliente;
 use app\models\ContactForm;
 
 class SiteController extends Controller
@@ -77,17 +78,17 @@ class SiteController extends Controller
 
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
-          if(isset(Yii::$app->user->identity->idp_02in)){
-            echo '<script>console.log("idp_02in: '.Yii::$app->user->identity->idp_02in.'");</script>';
-          }else{
-              echo '<script>console.log("idp_02in: no existes");</script>';
-          }
-          if (Yii::$app->user->isGuest) {
-            echo '<script>console.log("el un pinche invitado");</script>';
-          }else{
-            echo '<script>console.log("esta registrado");</script>';
-          }
-            //return $this->goBack();
+          // if(isset(Yii::$app->user->identity->idp_02in)){
+          //   echo '<script>console.log("idp_02in: '.Yii::$app->user->identity->idp_02in.'");</script>';
+          // }else{
+          //     echo '<script>console.log("idp_02in: no existes");</script>';
+          // }
+          // if (Yii::$app->user->isGuest) {
+          //   echo '<script>console.log("el un pinche invitado");</script>';
+          // }else{
+          //   echo '<script>console.log("esta registrado");</script>';
+          // }
+            return $this->goBack();
         }
 
         $model->password = '';
@@ -96,6 +97,22 @@ class SiteController extends Controller
         ]);
     }
 
+    public function actionLoginCliente()
+    {
+        if (!Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+
+        $model = new LoginFormCliente();
+        if ($model->load(Yii::$app->request->post()) && $model->login()) {
+            return $this->render('cliente');
+        }
+
+        $model->password = '';
+        return $this->render('loginCliente', [
+            'model' => $model,
+        ]);
+    }
     /**
      * Logout action.
      *
