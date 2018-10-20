@@ -54,6 +54,7 @@ AppAsset::register($this);
             // ['label' => 'Contact', 'url' => ['/site/contact']],
             ['label' => 'Usuario', 'url' => ['tr02usu/index']],
             ['label' => 'Cliente', 'url' => ['tr06cli/index']],
+            ['label' => 'Nombre Herramienta', 'url' => ['tr08nhr/index']],
             ['label' => 'Marca', 'url' => ['tr09mar/index']],
             ['label' => 'Herramienta', 'url' => ['tr10her/index']],
                 '<li>'
