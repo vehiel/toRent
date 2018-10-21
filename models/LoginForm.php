@@ -85,7 +85,7 @@ class LoginForm extends Model
           /*usa el modelo de usuario que tiene el acceso a la base de datos para validar el usuario y la contraseña, esta clase debe inplementar IdentityInterface*/
 
             $this->_user = User::findByUsername($this->username);
-            echo '<script>console.log("Fin");</script>';
+            // echo '<script>console.log("Fin");</script>';
         }
         return $this->_user;
     }
