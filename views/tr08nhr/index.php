@@ -28,7 +28,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
             'idn_08in',
             'nom_08vc', 
-
+            'ima_08vc',
             ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>
