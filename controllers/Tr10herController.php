@@ -9,6 +9,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
+use yii\web\UploadedFile;
 
 /**
  * Tr10herController implements the CRUD actions for Tr10her model.
@@ -81,6 +82,20 @@ class Tr10herController extends Controller
 
         if ($model->load(Yii::$app->request->post())) {
           $model->alq_10in = 0;
+          /*se crea una instancia del comprobante*/
+          $model->file = UploadedFile::getInstance($model, 'file');
+          /*si se ingreso un archivo y es fue valido*/
+          if ($model->file) {
+            /*se guarda el la ruta predeterminada*/
+            if($model->file->saveAs('uploads/herramienta/' . $model->file->baseName . '.'. $model->file->extension)){
+              /*si se guardo el comprobante, se agrega el nombre al modelo siendo guardado*/
+              $model->ima_10vc = $model->file->baseName . '.' . $model->file->extension;
+            }else{
+              throw new ServerErrorHttpException(Yii::t('app', 'No se pudo subir el archivo'));
+            }
+            /*se pone null el atributo file para que no de problemas a la hora de guardar el modelo*/
+            $model->file =null;
+          }
           if($model->save()){
             return $this->redirect(['view', 'id' => $model->chr_10in]);
           }
@@ -102,8 +117,34 @@ class Tr10herController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post())) {
+
+          $model->file = UploadedFile::getInstance($model, 'file');
+          /*si existe el archivo, que el campo no este vacio, la vista previa no cuenta, el comprobante fue Eliminado y
+          se cargo otro
+          Cuando se muestra el formulario en update, carga una vista previa del comprobante,
+          no carga el archivo, si el comprobante no se toca, no se actualizara*/
+          if ($model->file) {
+            /*si se cargo un nuevo comprobante, se comprueba que se elimine cualquier
+            comprobante anterior
+            si el archivo existe y ademas ima_10vc no esta null, se elimina el comprobante
+            si no se comprueba ima_10vc la busqueda del file_exists sera true,
+            porque el directorio si existe*/
+            if(file_exists(Yii::getAlias('@app').'/web/uploads/herramienta/'.$model->ima_10vc)
+            && $model->ima_10vc != null){
+              unlink(Yii::getAlias('@app').'/web/uploads/herramienta/'.$model->ima_10vc);
+            }
+            /*se guarda el nuevo comprobante*/
+            if($model->file->saveAs('uploads/herramienta/' . $model->file->baseName . '.'. $model->file->extension)){
+              /*si se guardo el archivo, se agrega el nombre de comprobante al modelo aguardar*/
+              $model->ima_10vc = $model->file->baseName . '.' . $model->file->extension;
+            }
+            /*se pone en null el atributo file, para que no de problemas al guardar*/
+            $model->file =null;
+          }
+          if($model->save()){
             return $this->redirect(['view', 'id' => $model->chr_10in]);
+          }
         }
 
         return $this->render('update', [
@@ -120,7 +161,12 @@ class Tr10herController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+      $model = $this->findModel($id);
+      if(file_exists(Yii::getAlias('@app').'/web/uploads/herramienta/'.$model->ima_10vc)
+      && $model->ima_10vc != null){
+        unlink(Yii::getAlias('@app').'/web/uploads/herramienta/'.$model->ima_10vc);
+      }
+      $model->delete();
 
         return $this->redirect(['index']);
     }

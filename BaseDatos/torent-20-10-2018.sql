@@ -40,7 +40,7 @@ CREATE TABLE `tr02usu` (
 
 /*Data for the table `tr02usu` */
 
-insert  into `tr02usu`(`nus_02in`,`idp_02in`,`con_02vc`,`est_02in`,`idr_03in`,`nom_02vc`,`ap1_02vc`,`ap2_02vc`,`tel_02vc`,`gen_02in`,`ema_02vc`,`dir_02vc`,`ncu_02vc`,`fna_02dt`,`nac_02vc`) values 
+insert  into `tr02usu`(`nus_02in`,`idp_02in`,`con_02vc`,`est_02in`,`idr_03in`,`nom_02vc`,`ap1_02vc`,`ap2_02vc`,`tel_02vc`,`gen_02in`,`ema_02vc`,`dir_02vc`,`ncu_02vc`,`fna_02dt`,`nac_02vc`) values
 (6,504080760,'$2y$13$Z0Qs9gJ3nqKeuML6/JqC0OdpLz/USXg4D9fkeW/DhmZNiKfYsy.Hq',1,NULL,'pedro','pica','piedra','23-16-58-92',1,'vehiel@xd.com','ni idea','123','2018-11-07','CR'),
 (7,504080761,'$2y$13$PRUy0M4TLWqk23zr0JrFUO5vCzNvy4BQIONPmSt.U5OohS2bpaE7.',1,NULL,'Vehiel','Alemán ','campos','87-22-18-59',0,'vehiel@xd.com','Nicoya','12365','2018-10-30','Cr'),
 (5,504170086,'torent2018',0,NULL,'hellen','castillo','perez','6140-0569',0,'vehiel@xd.com','curime','12-563','2018-10-05','CR');
@@ -99,7 +99,7 @@ CREATE TABLE `tr06cli` (
 
 /*Data for the table `tr06cli` */
 
-insert  into `tr06cli`(`idp_06in`,`con_06vc`,`ncl_06in`,`emo_06in`,`obs_06vc`,`nom_06vc`,`ap1_06vc`,`ap2_06vc`,`tel_06vc`,`gen_06in`,`ema_06vc`,`dir_06vc`,`ncu_06vc`,`fna_06dt`,`nac_06vc`) values 
+insert  into `tr06cli`(`idp_06in`,`con_06vc`,`ncl_06in`,`emo_06in`,`obs_06vc`,`nom_06vc`,`ap1_06vc`,`ap2_06vc`,`tel_06vc`,`gen_06in`,`ema_06vc`,`dir_06vc`,`ncu_06vc`,`fna_06dt`,`nac_06vc`) values
 (504080760,'$2y$13$kVrC4BhVCSRPqMz/8n364u4jaZ60V9fPazd1om82hZNuKpZamqHLG',3,0,'','vehiel','aleman','campos','8722-1859',1,'vehiel@xd.com','aqui','100-200','2018-10-15','CR'),
 (504080761,'123',1,0,'','ismael','reyes','diaz','8722-1859',1,'ismael@xd.com','ni idea','12345','1996-01-01','CR');
 
@@ -110,14 +110,14 @@ DROP TABLE IF EXISTS `tr08nhr`;
 CREATE TABLE `tr08nhr` (
   `idn_08in` int(10) NOT NULL AUTO_INCREMENT COMMENT 'Id nombre herramienta',
   `nom_08vc` varchar(50) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Nombre',
-  `ima_08vc` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Imagen',
+  `ima_08vc` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Imágen',
   PRIMARY KEY (`idn_08in`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 /*Data for the table `tr08nhr` */
 
-insert  into `tr08nhr`(`idn_08in`,`nom_08vc`,`ima_08vc`) values 
-(1,'Taladro',NULL),
+insert  into `tr08nhr`(`idn_08in`,`nom_08vc`,`ima_08vc`) values
+(1,'Taladro','taladro.jpg'),
 (2,'Patin',NULL),
 (3,'Sander',NULL),
 (4,'Batidora',NULL),
@@ -138,7 +138,7 @@ CREATE TABLE `tr09mar` (
 
 /*Data for the table `tr09mar` */
 
-insert  into `tr09mar`(`cgm_09in`,`nom_09vc`,`est_09in`) values 
+insert  into `tr09mar`(`cgm_09in`,`nom_09vc`,`est_09in`) values
 (1,'DeWalt',1),
 (2,'Makita',1),
 (3,'Truper',1),
@@ -160,9 +160,9 @@ CREATE TABLE `tr10her` (
   `gar_10in` int(5) NOT NULL COMMENT 'Garantía en meses',
   `tip_10in` int(5) NOT NULL COMMENT 'Tipo',
   `est_10in` int(5) NOT NULL COMMENT 'Estado de la herramienta',
-  `alq_10in` int(5) NOT NULL COMMENT 'Alquilada',
+  `alq_10in` int(5) DEFAULT NULL COMMENT 'Alquilada',
   `ser_10vc` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Serial',
-  `ima_10vc` varchar(100) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Imagen',
+  `ima_10vc` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Imágen',
   `can_10in` int(11) NOT NULL COMMENT 'Cantidad',
   `pre_10de` decimal(10,2) NOT NULL COMMENT 'Precio',
   PRIMARY KEY (`chr_10in`),
@@ -170,12 +170,13 @@ CREATE TABLE `tr10her` (
   KEY `fk_nombreherramienta_herramienta` (`idn_08in`),
   CONSTRAINT `fk_marca_herramienta` FOREIGN KEY (`cgm_09in`) REFERENCES `tr09mar` (`cgm_09in`),
   CONSTRAINT `fk_nombreherramienta_herramienta` FOREIGN KEY (`idn_08in`) REFERENCES `tr08nhr` (`idn_08in`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 /*Data for the table `tr10her` */
 
-insert  into `tr10her`(`chr_10in`,`idn_08in`,`cgm_09in`,`vol_10in`,`des_10vc`,`vut_10in`,`gar_10in`,`tip_10in`,`est_10in`,`alq_10in`,`ser_10vc`,`ima_10vc`,`can_10in`,`pre_10de`) values 
-(1,1,1,1,'amarrillo con negro',5,12,1,1,0,'123qwerty','algo.jpg',0,0.00);
+insert  into `tr10her`(`chr_10in`,`idn_08in`,`cgm_09in`,`vol_10in`,`des_10vc`,`vut_10in`,`gar_10in`,`tip_10in`,`est_10in`,`alq_10in`,`ser_10vc`,`ima_10vc`,`can_10in`,`pre_10de`) values
+(1,1,1,1,'amarrillo con negro',5,12,1,1,0,'123qwerty','algo.jpg',0,0.00),
+(3,7,6,3,'prueba ak7',20,12,1,1,0,'122333','Screenshot from 2018-09-07 14-46-33.png',2,500000.00);
 
 /*Table structure for table `tr11ord_alq` */
 
@@ -190,7 +191,9 @@ CREATE TABLE `tr11ord_alq` (
   `sto_11de` decimal(10,2) NOT NULL COMMENT 'Subtotal',
   `mto_11de` decimal(10,2) NOT NULL COMMENT 'Monto Total',
   `est_11in` int(11) NOT NULL COMMENT 'Estado',
-  PRIMARY KEY (`ido_11in`)
+  PRIMARY KEY (`ido_11in`),
+  KEY `fk_numero_cliente` (`ncl_06in`),
+  CONSTRAINT `fk_numero_cliente` FOREIGN KEY (`ncl_06in`) REFERENCES `tr06cli` (`ncl_06in`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 /*Data for the table `tr11ord_alq` */
@@ -205,7 +208,11 @@ CREATE TABLE `tr12det_alq` (
   `chr_10in` int(11) NOT NULL COMMENT 'Código de herramienta',
   `pre_12de` decimal(10,2) NOT NULL COMMENT 'Precio',
   `can_12in` int(11) NOT NULL COMMENT 'Cantidad',
-  PRIMARY KEY (`idd_12in`)
+  PRIMARY KEY (`idd_12in`),
+  KEY `fk_orden_alquiler` (`ido_11in`),
+  KEY `fk_codigo_herramienta` (`chr_10in`),
+  CONSTRAINT `fk_codigo_herramienta` FOREIGN KEY (`chr_10in`) REFERENCES `tr10her` (`chr_10in`),
+  CONSTRAINT `fk_orden_alquiler` FOREIGN KEY (`ido_11in`) REFERENCES `tr11ord_alq` (`ido_11in`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 /*Data for the table `tr12det_alq` */

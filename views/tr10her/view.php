@@ -91,6 +91,7 @@ $this->params['breadcrumbs'][] = $this->title;
               }
             ],
             'ser_10vc',
+            'ima_10vc',
         ],
     ]) ?>
 

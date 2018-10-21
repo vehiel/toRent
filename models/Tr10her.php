@@ -18,16 +18,20 @@ use Yii;
  * @property int $est_10in Estado de la herramienta
  * @property int $alq_10in Alquilada
  * @property string $ser_10vc Serial
+ * @property string $ima_10vc Imagen
+ * @property int $can_10in Cantidad
+ * @property string $pre_10de Precio
  *
  * @property Tr09mar $cgm09in
  * @property Tr08nhr $n08in
- * @property Tr11alq[] $tr11alqs
+ * @property Tr12detAlq[] $tr12detAlqs
  */
 class Tr10her extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
+     public $file; //atributo que se utiliza para cargar el logo
     public static function tableName()
     {
         return 'tr10her';
@@ -39,12 +43,15 @@ class Tr10her extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['idn_08in', 'cgm_09in', 'vol_10in', 'des_10vc', 'vut_10in', 'gar_10in', 'tip_10in', 'est_10in', 'alq_10in'], 'required'],
-            [['idn_08in', 'cgm_09in', 'vol_10in', 'vut_10in', 'gar_10in', 'tip_10in', 'est_10in', 'alq_10in'], 'integer'],
-            [['des_10vc'], 'string', 'max' => 100],
+            [['idn_08in', 'cgm_09in', 'vol_10in', 'des_10vc', 'vut_10in', 'gar_10in', 'tip_10in', 'est_10in', 'can_10in', 'pre_10de'], 'required'],
+            [['idn_08in', 'cgm_09in', 'vol_10in', 'vut_10in', 'gar_10in', 'tip_10in', 'est_10in', 'alq_10in', 'can_10in'], 'integer'],
+            [['pre_10de'], 'number'],
+            [['des_10vc', 'ima_10vc'], 'string', 'max' => 100],
             [['ser_10vc'], 'string', 'max' => 50],
             [['cgm_09in'], 'exist', 'skipOnError' => true, 'targetClass' => Tr09mar::className(), 'targetAttribute' => ['cgm_09in' => 'cgm_09in']],
             [['idn_08in'], 'exist', 'skipOnError' => true, 'targetClass' => Tr08nhr::className(), 'targetAttribute' => ['idn_08in' => 'idn_08in']],
+            //atributo que se utiliza para cargar el logo
+            [['file'],'file','extensions' => 'png, jpg','maxSize' => 2048000, 'tooBig' => 'El peso máximo son 2MB'],
         ];
     }
 
@@ -65,6 +72,10 @@ class Tr10her extends \yii\db\ActiveRecord
             'est_10in' => Yii::t('app', 'Estado de la herramienta'),
             'alq_10in' => Yii::t('app', 'Alquilada'),
             'ser_10vc' => Yii::t('app', 'Serial'),
+            'file'=> Yii::t('app', 'Imágen'),
+            'ima_10vc' => Yii::t('app', 'Imágen'),
+            'can_10in' => Yii::t('app', 'Cantidad'),
+            'pre_10de' => Yii::t('app', 'Precio'),
         ];
     }
 
@@ -87,9 +98,9 @@ class Tr10her extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getTr11alqs()
+    public function getTr12detAlqs()
     {
-        return $this->hasMany(Tr11alq::className(), ['chr_10in' => 'chr_10in']);
+        return $this->hasMany(Tr12detAlq::className(), ['chr_10in' => 'chr_10in']);
     }
 
     public function getNombreHerramienta()
