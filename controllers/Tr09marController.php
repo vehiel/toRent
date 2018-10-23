@@ -117,7 +117,11 @@ class Tr09marController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+      $model = $this->findModel($id);
+
+      if($model->tr10hers == null){
+        $model->delete();
+      }
 
         return $this->redirect(['index']);
     }

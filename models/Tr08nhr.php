@@ -48,7 +48,7 @@ class Tr08nhr extends \yii\db\ActiveRecord
             'idn_08in' => Yii::t('app', 'Id nombre herramienta'),
             'nom_08vc' => Yii::t('app', 'Nombre'),
             'ima_08vc' => Yii::t('app', 'Imágen'),
-            'file'=> ii::t('app', 'Imágen'),
+            'file'=> Yii::t('app', 'Imágen'),
         ];
     }
 
