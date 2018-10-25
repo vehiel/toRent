@@ -57,6 +57,7 @@ AppAsset::register($this);
             ['label' => 'Nombre Herramienta', 'url' => ['tr08nhr/index']],
             ['label' => 'Marca', 'url' => ['tr09mar/index']],
             ['label' => 'Herramienta', 'url' => ['tr10her/index']],
+            ['label' => 'Ordenes', 'url' => ['tr12detalq/index']],
                 '<li>'
                 . Html::beginForm(['/site/logout'], 'post')
                 . Html::submitButton(
