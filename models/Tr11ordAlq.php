@@ -35,7 +35,7 @@ class Tr11ordAlq extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['ncl_06in', 'fso_11dt', 'sto_11de', 'mto_11de', 'est_11in'], 'required'],
+            [['ncl_06in', 'fso_11dt', 'est_11in'], 'required'],
             [['ncl_06in', 'est_11in'], 'integer'],
             [['fso_11dt', 'fre_11dt', 'fde_11dt'], 'safe'],
             [['sto_11de', 'mto_11de'], 'number'],
