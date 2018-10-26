@@ -3,17 +3,16 @@
 namespace app\controllers;
 
 use Yii;
-use app\models\Tr09mar;
-use app\models\search\Tr09marSearch;
+use app\models\Tr11ordAlq;
+use app\models\search\Tr11ordAlqSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use yii\filters\AccessControl;
 
 /**
- * Tr09marController implements the CRUD actions for Tr09mar model.
+ * Tr11ordAlqController implements the CRUD actions for Tr11ordAlq model.
  */
-class Tr09marController extends Controller
+class Tr11ordAlqController extends Controller
 {
     /**
      * {@inheritdoc}
@@ -21,18 +20,6 @@ class Tr09marController extends Controller
     public function behaviors()
     {
         return [
-          'access'=>[
-            'class'=>AccessControl::className(),
-            'only'=>['index','view','update','create','delete'],
-            'rules'=>[
-              [
-                'actions'=>['view','create','update','delete','index'],
-                'allow'=>true,
-                'roles'=>['@'],
-
-              ],
-            ],
-          ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
@@ -43,12 +30,12 @@ class Tr09marController extends Controller
     }
 
     /**
-     * Lists all Tr09mar models.
+     * Lists all Tr11ordAlq models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new Tr09marSearch();
+        $searchModel = new Tr11ordAlqSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -58,7 +45,7 @@ class Tr09marController extends Controller
     }
 
     /**
-     * Displays a single Tr09mar model.
+     * Displays a single Tr11ordAlq model.
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -71,16 +58,16 @@ class Tr09marController extends Controller
     }
 
     /**
-     * Creates a new Tr09mar model.
+     * Creates a new Tr11ordAlq model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new Tr09mar();
+        $model = new Tr11ordAlq();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->cgm_09in]);
+            return $this->redirect(['view', 'id' => $model->ido_11in]);
         }
 
         return $this->render('create', [
@@ -89,7 +76,7 @@ class Tr09marController extends Controller
     }
 
     /**
-     * Updates an existing Tr09mar model.
+     * Updates an existing Tr11ordAlq model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -100,7 +87,7 @@ class Tr09marController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->cgm_09in]);
+            return $this->redirect(['view', 'id' => $model->ido_11in]);
         }
 
         return $this->render('update', [
@@ -109,7 +96,7 @@ class Tr09marController extends Controller
     }
 
     /**
-     * Deletes an existing Tr09mar model.
+     * Deletes an existing Tr11ordAlq model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -117,25 +104,21 @@ class Tr09marController extends Controller
      */
     public function actionDelete($id)
     {
-      $model = $this->findModel($id);
-
-      if($model->tr10hers == null){
-        $model->delete();
-      }
+        $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
     }
 
     /**
-     * Finds the Tr09mar model based on its primary key value.
+     * Finds the Tr11ordAlq model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return Tr09mar the loaded model
+     * @return Tr11ordAlq the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Tr09mar::findOne($id)) !== null) {
+        if (($model = Tr11ordAlq::findOne($id)) !== null) {
             return $model;
         }
 
