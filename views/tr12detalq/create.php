@@ -7,7 +7,7 @@ use yii\helpers\Html;
 /* @var $model12 app\models\Tr12detalq */
 
 $this->title = Yii::t('app', 'Crear Orden');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Tr12detalqs'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Ordenes'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="tr12detalq-create">

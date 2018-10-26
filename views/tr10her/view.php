@@ -48,11 +48,11 @@ $this->params['breadcrumbs'][] = $this->title;
             [
               'attribute'=>'vol_10in',
               'value'=> function($model){
-                if($model->tip_10in == 1){
+                if($model->vol_10in == 1){
                   return "110";
-                }elseif($model->tip_10in == 2){
+                }elseif($model->vol_10in == 2){
                   return "220";
-                }elseif($model->tip_10in == 3){
+                }elseif($model->vol_10in == 3){
                   return "No aplica";
                 }
               }
@@ -92,6 +92,8 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             'ser_10vc',
             'ima_10vc',
+            'pre_10de',
+            'can_10in',
         ],
     ]) ?>
 

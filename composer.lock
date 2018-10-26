@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6311f7d2761ba90de0b811da07954194",
+    "content-hash": "c460dccb5f6f40d21b8e3c97306c46d0",
     "packages": [
         {
             "name": "borales/yii2-phone-input",
@@ -449,6 +449,60 @@
             "time": "2018-09-25T15:16:57+00:00"
         },
         {
+            "name": "kartik-v/yii2-date-range",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/kartik-v/yii2-date-range.git",
+                "reference": "3cec83d6f2882b8fec85d3f532cd711aea5ad339"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/kartik-v/yii2-date-range/zipball/3cec83d6f2882b8fec85d3f532cd711aea5ad339",
+                "reference": "3cec83d6f2882b8fec85d3f532cd711aea5ad339",
+                "shasum": ""
+            },
+            "require": {
+                "kartik-v/yii2-krajee-base": ">=2.0.0"
+            },
+            "type": "yii2-extension",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.7.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "kartik\\daterange\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Kartik Visweswaran",
+                    "email": "kartikv2@gmail.com",
+                    "homepage": "http://www.krajee.com/"
+                }
+            ],
+            "description": "An advanced Yii 2 date range picker input for based on bootstrap-daterangepicker plugin.",
+            "homepage": "https://github.com/kartik-v/yii2-date-range",
+            "keywords": [
+                "bootstrap",
+                "bootstrap 3",
+                "date",
+                "date-range",
+                "extension",
+                "range",
+                "time",
+                "widget",
+                "yii2"
+            ],
+            "time": "2018-10-09T12:34:51+00:00"
+        },
+        {
             "name": "kartik-v/yii2-krajee-base",
             "version": "v2.0.0",
             "source": {
@@ -715,12 +769,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/kartik-v/yii2-widget-select2.git",
-                "reference": "0df692c8772c2b53406ae705492c8401ea6501d6"
+                "reference": "d83b74022e2cba650072270738bdf63fb4ff007f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kartik-v/yii2-widget-select2/zipball/0df692c8772c2b53406ae705492c8401ea6501d6",
-                "reference": "0df692c8772c2b53406ae705492c8401ea6501d6",
+                "url": "https://api.github.com/repos/kartik-v/yii2-widget-select2/zipball/d83b74022e2cba650072270738bdf63fb4ff007f",
+                "reference": "d83b74022e2cba650072270738bdf63fb4ff007f",
                 "shasum": ""
             },
             "require": {
@@ -760,7 +814,7 @@
                 "widget",
                 "yii2"
             ],
-            "time": "2018-10-03T07:09:03+00:00"
+            "time": "2018-10-25T03:23:23+00:00"
         },
         {
             "name": "nterms/yii2-pagesize-widget",
@@ -1296,21 +1350,21 @@
         },
         {
             "name": "codeception/phpunit-wrapper",
-            "version": "6.0.12",
+            "version": "6.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeception/phpunit-wrapper.git",
-                "reference": "de922c760dfddf8a33c4a066efcd0cd93576d957"
+                "reference": "12d76a447d3e4d12169ab71e188082be14b6ca01"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeception/phpunit-wrapper/zipball/de922c760dfddf8a33c4a066efcd0cd93576d957",
-                "reference": "de922c760dfddf8a33c4a066efcd0cd93576d957",
+                "url": "https://api.github.com/repos/Codeception/phpunit-wrapper/zipball/12d76a447d3e4d12169ab71e188082be14b6ca01",
+                "reference": "12d76a447d3e4d12169ab71e188082be14b6ca01",
                 "shasum": ""
             },
             "require": {
                 "phpunit/php-code-coverage": ">=4.0.4 <6.0",
-                "phpunit/phpunit": ">=5.7.27 <7.0",
+                "phpunit/phpunit": ">=6.5.13 <7.0",
                 "sebastian/comparator": ">=1.2.4 <3.0",
                 "sebastian/diff": ">=1.4 <4.0"
             },
@@ -1338,7 +1392,7 @@
                 }
             ],
             "description": "PHPUnit classes used by Codeception",
-            "time": "2018-09-12T20:19:47+00:00"
+            "time": "2018-10-21T20:35:15+00:00"
         },
         {
             "name": "codeception/specify",
@@ -3886,7 +3940,8 @@
     "stability-flags": {
         "kartik-v/yii2-widget-select2": 20,
         "kartik-v/yii2-widget-datepicker": 20,
-        "kartik-v/yii2-widget-fileinput": 20
+        "kartik-v/yii2-widget-fileinput": 20,
+        "kartik-v/yii2-date-range": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
