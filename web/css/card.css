@@ -15,6 +15,7 @@ body{
   max-width: 300px;
   /* text-align: center; */
   font-family: arial;
+  margin-bottom: 20px;
 }
 
 .price {

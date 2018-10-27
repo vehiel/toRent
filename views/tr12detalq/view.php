@@ -3,6 +3,16 @@
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 use yii\grid\GridView;
+use yii\widgets\Pjax;
+use yii\bootstrap\Modal;
+use yii\widgets\ActiveForm;
+use kartik\select2\Select2;
+use yii\helpers\ArrayHelper;
+
+use app\models\Tr10her;
+use app\models\Tr09mar;
+use app\models\Tr08nhr;
+use app\models\Tr12detalq;
 
 /* @var $this yii\web\View */
 /* @var $model11 app\models\Tr12detalq */
@@ -12,8 +22,10 @@ use yii\grid\GridView;
 $this->title = Yii::t('app','Orden: ').$model11->ido_11in;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Ordenes'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
+
+$model12 = new Tr12detalq();
 ?>
-<div class="tr12detalq-view">
+<div class="tr12detalq-view row">
 
 
 
@@ -28,43 +40,151 @@ $this->params['breadcrumbs'][] = $this->title;
     ]) */?>
   </p>
   <div class="panel panel-default">
-    <div  class="panel-heading"><h1><?= Html::encode($this->title) ?></h1></div>
+    <div  class="panel-heading"><h4><?= Html::encode($this->title) ?></h4></div>
     <div class="panel-body ">
-      <?= DetailView::widget([
-        'model' => $model11,
-        'attributes' => [
-          'ido_11in',
-          'ncl_06in',
-          'fso_11dt',
-          'fre_11dt',
-          'fde_11dt',
-          'mto_11de',
-          'est_11in',
-        ],
-        ]) ?>
-      </div>
-    </div>
+      <div class="col-md-6">
+        <?= DetailView::widget([
+          'model' => $model11,
+          'attributes' => [
+            // 'ido_11in',
+            'ncl_06in',
+            'fcr_11dt',
+            'fso_11dt',
+            'fre_11dt',
+          ],
+          ]) ?>
+        </div>
+        <div class="col-md-6">
+          <?= DetailView::widget([
+            'model' => $model11,
+            'attributes' => [
+              'fde_11dt',
+              'mto_11de',
+              'est_11in',
+            ],
+            ]) ?>
+          </div>
+        </div> <!--- fin class="panel-boy" -->
+      </div> <!--- fin class="panel panel-default" -->
+      <div id="divInputAgregarArticulo col-lg-12 col-md-12" >
+        <div class="col-lg-12 col-md-12">
+          <hr />
+        </div>
+        <?php $form = ActiveForm::begin(); ?>
+        <div class="col-lg-4 col-md-4">
+          <?= $form->field($model12, 'chr_10in')->widget(Select2::className(),[
+            'data' => ArrayHelper::map(Tr10her::find()->asArray()->all(),'chr_10in', function($element){
 
-    <div class="panel panel-default">
-      <div  class="panel-heading"><h1>Artículos</h1></div>
-      <div class="panel-body ">
-    <?= GridView::widget([
-      'dataProvider' => $dataProvider,
-      'filterModel' => $searchModel,
-      'columns' => [
-        ['class' => 'yii\grid\SerialColumn'],
+              $marca = Tr09mar::findOne(['cgm_09in'=>$element['cgm_09in']]);
+              $nom = Tr08nhr::findOne($element['idn_08in']);
+              return $element['chr_10in'].' '.$nom['nom_08vc'].' '.$marca['nom_09vc'];
+            }),
+            'options' => ['placeholder' => 'Seleccionar', 'id'=>'inputCodigoHerramienta'],
+            'pluginOptions' => [
+              'allowClear' => true,
+              /*no se ocupa, porque siempre se va a ingresar una herramienta*/
+              // 'disabled'=> !$model11->isNewRecord,
+            ],
+            ]) ?>
+          </div> <!-- fin class="col-lg-4 col-md-4"-->
+          <div class="col-lg-4 col-md-4">
+            <?= $form->field($model12, 'can_12in')->textInput(['id'=>'inputCantidad']) ?>
+          </div> <!-- fin class="col-lg-4 col-md-4"-->
+          <?php ActiveForm::end(); ?>
+          <div class="col-lg-4 col-md-4" >
+            <?php /* Html::button(Yii::t('app', 'Agregar Articulo'),
+            [
+              'class' => 'btn btn-success',
+              'id'=>'btnAgregarArticulo',
+              'onclick'=>'javascript:agregarArticulo('.$model11->ido_11in.')',
+              'style'=>"margin-top: 25px;",
+            ]
+            )*/
+            echo Html::button(Yii::t('app', 'Agregar Articulo'),
+            [
+              'class' => 'btn btn-success',
+              'id'=>'btnAgregarArticulo',
+              'onclick'=>'javascript:agregarArticulo('.$model11->ido_11in.')',
+              'style'=>"margin-top: 25px;",
+            ]
+            )
+            ?>
+          </div> <!-- fin class="col-lg-4 col-md-4"-->
+          <div class="col-lg-12 col-md-12">
+            <hr />
+          </div>
+        </div> <!-- fin divInputAgregarArticulo-->
 
-        'idd_12in',
-        'ido_11in',
-        'chr_10in',
-        'pre_12de',
-        'can_12in',
-        'mto_12de',
+        <!-- <div class="panel panel-default col-lg-12 col-md-12">
+        <div  class="panel-heading"><h4>Artículos</h4></div>
+        <div class="panel-body "> -->
+        <div class="col-lg-12 col-md-12">
 
-        ['class' => 'yii\grid\ActionColumn'],
+        <?php Pjax::begin(['id'=>'myPjaxId']); ?>
+        <?= GridView::widget([
+          'dataProvider' => $dataProvider,
+          'filterModel' => $searchModel,
+          'columns' => [
+            ['class' => 'yii\grid\SerialColumn'],
+
+            'idd_12in',
+            'ido_11in',
+            'chr_10in',
+            'pre_12de',
+            'can_12in',
+            'mto_12de',
+
+            ['class' => 'yii\grid\ActionColumn'],
+          ],
+        ]); ?>
+        <?php Pjax::end();?>
+      </div> <!-- fin class="col-lg-12 col-md-12" de gridview-->
+
+    </div> <!-- fin class="tr12detalq-view row"-->
+    <?php
+    /**************************/
+    Modal::begin([
+      'options' => [
+        'id'=>'modalAgregarArticulo',
       ],
-    ]); ?>
-  </div>
-</div>
+      'size'=>'modal-md',
+    ]);
+    echo '<div id="modalContent"></div>';
+    Modal::end();
+    ?>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+    crossorigin="anonymous"></script>
+    <script>
+    function agregarArticulo(id){
+      var cod = $('#inputCodigoHerramienta').val();
+      var can = $('#inputCantidad').val();
+      if(cod == "" || can == ""){
+        return;
+      }
+      // alert("cod: "+cod+" can: "+can);
+      // return;
+      $.ajax({
+        'url':'?r=tr12detalq/agregar-articulo',
+        'dataType':'json',
+        'method':'post',
+        'data': {'id_orden':id,'can':can,'cod':can},
+        success: function(data){
+          if(data.ok){
+              $.growl.notice({ message: data.msj });
+          }else{
+            $.growl.error({ message: data.msj});
+          }
+        },
+        error: function(){
+          $.growl.error({ message: '<span class="glyphicon glyphicon-bullhorn"></span> <strong>Error Interno, comuniquese con soporte!</strong>'});
+        }
+      });
+      // $('#modalAgregarArticulo').modal('show').find('#modalContent').load('?r=tr12detalq/agregar-articulo&id_orden=7')
+      // $.pjax.reload({container:'#myPjaxId'});
 
-  </div>
+    }
+    $(function(){ /* doc ready*/
+      // $.growl.notice({ message: '<span class="glyphicon glyphicon-ok-sign"></span> <strong>Carrito Actualizado'});
+    });
+    </script>

@@ -39,7 +39,7 @@ class Tr12detalqSearch extends Tr12detalq
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
+    public function search($params,$idOrden)
     {
         $query = Tr12detalq::find();
 
@@ -60,7 +60,7 @@ class Tr12detalqSearch extends Tr12detalq
         // grid filtering conditions
         $query->andFilterWhere([
             'idd_12in' => $this->idd_12in,
-            'ido_11in' => $this->ido_11in,
+            'ido_11in' => $idOrden,
             'chr_10in' => $this->chr_10in,
             'pre_12de' => $this->pre_12de,
             'can_12in' => $this->can_12in,

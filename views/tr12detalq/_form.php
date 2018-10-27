@@ -76,22 +76,25 @@ use yii\helpers\ArrayHelper;
               ],
               ]) ?>
 
-            <?php // $form->field($model12, 'pre_12de')->textInput(['maxlength' => true]) ?>
+              <?php // $form->field($model12, 'pre_12de')->textInput(['maxlength' => true]) ?>
 
-            <?= $form->field($model12, 'can_12in')->textInput(
-              [
-                'readonly'=> !$model11->isNewRecord,
-              ]
-              ) ?>
+              <?= $form->field($model12, 'can_12in')->textInput(
+                [
+                  'readonly'=> !$model11->isNewRecord,
+                ]
+                ) ?>
 
-              <?php // $form->field($model12, 'mto_12de')->textInput(['maxlength' => true]) ?>
+                <?php // $form->field($model12, 'mto_12de')->textInput(['maxlength' => true]) ?>
+              </div>
             </div>
-          </div>
-        </div>
-        <div class="form-group col-md-6">
-          <?= Html::submitButton(Yii::t('app', 'Guardar'), ['class' => 'btn btn-success']) ?>
-        </div>
+          </div><!-- fin  class="col-md-6" de articulo-->
+          <div class="col-md-6">
 
-        <?php ActiveForm::end(); ?>
-      </div> <!-- fin class row -->
-    </div>
+          </div>
+          <div class="form-group col-md-6">
+            <?= Html::submitButton(Yii::t('app', 'Guardar'), ['class' => 'btn btn-success']) ?>
+          </div>
+
+          <?php ActiveForm::end(); ?>
+        </div> <!-- fin class row -->
+      </div>
