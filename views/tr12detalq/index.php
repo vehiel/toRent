@@ -8,6 +8,7 @@ use app\models\Tr11ordAlq;
 use yii\helpers\ArrayHelper;
 use \nterms\pagesize\PageSize;
 use kartik\alert\AlertBlock;
+use kartik\growl\Growl;
 
 // use app\models\Tr10her;
 
@@ -46,14 +47,32 @@ use kartik\alert\AlertBlock;
 
 $this->title = Yii::t('app', 'Ordenes');
 $this->params['breadcrumbs'][] = $this->title;
-// Yii::$app->language = 'es';
+
 AlertBlock::widget([
   'type' => AlertBlock::TYPE_GROWL,
   'useSessionFlash' => true,
   'delay' => 1000,
 ]);
-
 ?>
+<?php //foreach (Yii::$app->session->getAllFlashes() as $message):; ?>
+            <?php
+            //  Growl::widget([
+            //     'type' => (!empty($message['type'])) ? $message['type'] : 'danger',
+            //     'title' => (!empty($message['title'])) ? Html::encode($message['title']) : 'Title Not Set!',
+            //     'icon' => (!empty($message['icon'])) ? $message['icon'] : 'fa fa-info',
+            //     'body' => (!empty($message['message'])) ? Html::encode($message['message']) : 'Message Not Set!',
+            //     'showSeparator' => true,
+            //     'delay' => 1, //This delay is how long before the message shows
+            //     'pluginOptions' => [
+            //         'delay' => (!empty($message['duration'])) ? $message['duration'] : 3000, //This delay is how long the message shows for
+            //         'placement' => [
+            //             'from' => (!empty($message['positonY'])) ? $message['positonY'] : 'top',
+            //             'align' => (!empty($message['positonX'])) ? $message['positonX'] : 'right',
+            //         ]
+            //     ]
+            // ]);
+            ?>
+        <?php// endforeach; ?>
 <div class="tr12detalq-index">
 
   <h1><?= Html::encode($this->title) ?></h1>
@@ -62,8 +81,10 @@ AlertBlock::widget([
   <p>
     <?= Html::a(Yii::t('app', 'Crear Orden'), ['create'], ['class' => 'btn btn-success']) ?>
   </p>
+  <!-- <div class="alert alert-danger">
+    <h4>Recuerde que las ordenes solicitadas tienen articulos bloqueados, se recomienda descartarlas para que los articulos esten disponibles.</h4>
+  </div> -->
   <div align="right">
-
     <label><?= Yii::t('app','Mostrando:') ?></label>
     <?php
     /*con esta vara pone la paginacion, pone como defualt 10 items, y las sizes son las diferentes cantidades disponibles a mostrar*/
@@ -77,6 +98,28 @@ AlertBlock::widget([
     'filterModel' => $searchModel,
     /*se aplica el filtro a la tabla*/
     'filterSelector' => 'select[name="per-page"]',
+    'rowOptions'=>function($model){
+      switch ($model->est_11in) {
+        // case 0:
+        // return "Inactivo";
+        // break;
+        case 1:
+         return ['class'=>'success'];
+        break;
+        case 2:
+        return ['class'=>'warning'];
+        break;
+        case 3:
+         return ['class'=>'primary'];
+        break;
+        case 4:
+         return ['class'=>'danger'];
+        break;
+        // case 5:
+        // return "Devuelto";
+        // break;
+      }
+    },
     'columns' => [
       ['class' => 'yii\grid\SerialColumn'],
 
@@ -187,6 +230,7 @@ AlertBlock::widget([
         'value'=>function($mode11){
           switch ($mode11->est_11in) {
             case 0:
+             // return ' &nbsp;&nbsp;&nbsp;<span class="label label-danger" style="font-size:12pt;">Alto</span>';
             return "Inactivo";
             break;
             case 1:

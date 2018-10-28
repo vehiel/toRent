@@ -36,7 +36,7 @@ class Tr11ordAlq extends \yii\db\ActiveRecord
   {
     return [
       [['ncl_06in', 'fcr_11dt', 'est_11in'], 'required'],
-      [['ncl_06in', 'est_11in'], 'integer'],
+      [['ncl_06in', 'est_11in','nus_ent_02in'], 'integer'],
       [['fso_11dt', 'fre_11dt', 'fde_11dt','fcr_11dt',], 'safe'],
       [['sto_11de', 'mto_11de'], 'number'],
       [['ncl_06in'], 'exist', 'skipOnError' => true, 'targetClass' => Tr06cli::className(), 'targetAttribute' => ['ncl_06in' => 'ncl_06in']],
@@ -68,6 +68,7 @@ class Tr11ordAlq extends \yii\db\ActiveRecord
       'mto_11de' => Yii::t('app', 'Monto Total'),
       'est_11in' => Yii::t('app', 'Estado'),
       'fcr_11dt'=> Yii::t('app', 'Fecha Creación'),
+      'nus_ent_02in' => Yii::t('app','Usuario Entrega')
     ];
   }
 

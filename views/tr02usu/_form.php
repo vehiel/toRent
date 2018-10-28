@@ -53,23 +53,26 @@ use kartik\date\DatePicker;
             'todayHighlight' => true,
             'autoclose' => true,
           ]
-        ])?>
+          ])?>
 
-        <?= $form->field($model, 'nac_02vc')->textInput(['maxlength' => true]) ?>
+          <?= $form->field($model, 'nac_02vc')->textInput(['maxlength' => true]) ?>
 
-        <?= $form->field($model, 'est_02in')->widget(Select2::className(),[
-          'data' => ['1'=>'Activo','0'=>'Inactivo'],
-          'options' => ['placeholder' => 'Seleccionar'],
-          'pluginOptions' => [
-            'allowClear' => true
-          ],
-          ]) ?>
-          <?= $form->field($model, 'con_02vc')->textInput(['maxlength' => true, 'value'=>'torent2018', 'readonly'=>true]) ?>
+          <?= $form->field($model, 'est_02in')->widget(Select2::className(),[
+            'data' => ['1'=>'Activo','0'=>'Inactivo'],
+            'options' => ['placeholder' => 'Seleccionar'],
+            'pluginOptions' => [
+              'allowClear' => true
+            ],
+            ]) ?>
+            <?
+            if($model->isNewRecord) {
+              echo $form->field($model, 'con_02vc')->textInput(['maxlength' => true, 'value'=>'torent2018', 'readonly'=>true]) ?>
+            }
+          </div>
+          <div class="form-group col-lg-12 col-md-12">
+            <?= Html::submitButton(Yii::t('app', 'Guardar'), ['class' => 'btn btn-success']) ?>
+          </div>
         </div>
-        <div class="form-group col-lg-12 col-md-12">
-          <?= Html::submitButton(Yii::t('app', 'Guardar'), ['class' => 'btn btn-success']) ?>
-        </div>
+        <?php ActiveForm::end(); ?>
+
       </div>
-      <?php ActiveForm::end(); ?>
-
-    </div>

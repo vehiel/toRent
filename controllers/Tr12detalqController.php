@@ -2,6 +2,7 @@
 namespace app\controllers;
 
 use Yii;
+// use yii\helpers\Html;
 use app\models\Tr12detalq;
 use app\models\Tr11ordAlq;
 use app\models\Tr10her;
@@ -55,9 +56,21 @@ class Tr12detalqController extends Controller
   {
     $searchModel = new Tr11ordAlqSearch();
     $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
-    /*Yii::$app->getSession()->setFlash('success',
-    '<span class="glyphicon glyphicon-ok-sign"></span> <strong>'.Yii::t('app','Guardado').'!</strong>');*/
+    // Yii::$app->getSession()->setFlash('default',
+    // '<h4>Recuerde que las ordenes solicitadas tienen articulos bloqueados,
+    // se recomienda descartarlas para que los articulos esten disponibles.</h4>');
+    // Yii::$app->getSession()->setFlash('success',
+    // '<h4>Recuerde que las ordenes solicitadas tienen articulos bloqueados,
+    // se recomienda descartarlas para que los articulos esten disponibles.</h4>');
+    Yii::$app->getSession()->setFlash('error',
+    '<span class="glyphicon glyphicon-bullhorn"></span> <br /><h4>Recuerde que las ordenes solicitadas tienen articulos <strong>bloqueados</strong>,
+    se recomienda descartarlas para que los articulos esten disponibles.</h4>');
+    // Yii::$app->getSession()->setFlash('success', [
+    //     'type' => 'success',
+    //     'icon' => 'fa fa-users',
+    //     'message' => Yii::t('app','My Message'),
+    //     'title' => Yii::t('app','My Title'),
+    // ]);
     return $this->render('index', [
       'searchModel' => $searchModel,
       'dataProvider' => $dataProvider,
@@ -352,8 +365,17 @@ class Tr12detalqController extends Controller
 
     // $model11 = new Tr11ordAlq;
     // if ($model12->load(Yii::$app->request->post())) {
-    /*buscamos la orden con numero de cliente, ademas esta orden debe estar con estado 1 o 2 (Activo o Solicitado)*/
-    $orden = Tr11ordAlq::find(['ido_11in'=>$idOrden])->andWhere(['IN','est_11in',[1,2]])->one();
+    /*buscamos la orden con id orden, ademas esta orden debe estar con estado 1 o 2 (Activo o Solicitado)*/
+    // $orden = Tr11ordAlq::find(['ido_11in'=>$idOrden])->andWhere(['IN','est_11in',[1,2]])->one();
+    $orden = Tr11ordAlq::findOne(['ido_11in'=>$idOrden]);
+    if ($orden['est_11in'] != 1 && $orden['est_11in'] != 2) {
+      /*no se pueden agregar mas articulos a esta orden*/
+      /*no se pueden agregar mas articulos a esta orden*/
+      $res = ['ok'=>false,'msj'=>'<span class="glyphicon glyphicon-bullhorn"></span> <strong>'.
+      Yii::t('app','No se pueden agregar mas articulos a esta orden').'!</strong>'];
+      echo json_encode($res);
+      exit();
+    }
     if ($orden !== null) {
       /*se busca en la tbl 12 donde el id orden sea == $idOrden, ademas donde el codigo herramienta se igual al seleccionado
       $model12->chr_10in, si se llega a este punto es que la orden esta activa, por lo tanto no se tiene que volver a validar.
@@ -385,14 +407,14 @@ class Tr12detalqController extends Controller
             echo json_encode($res);
             exit();
           }else{
-            /*se pone un mensaje de success y termina el proceso*/
+            /*se pone un mensaje de error y termina el proceso*/
             $res = ['ok'=>false,'msj'=>'<span class="glyphicon glyphicon-bullhorn"></span> <strong>'.
             Yii::t('app','$orden - No se incremento la cantidad de este articulo').'!</strong>'];
             echo json_encode($res);
             exit();
           }
         }else{ /* fin if($articulo->save())*/
-          /*se pone un mensaje de success y termina el proceso*/
+          /*se pone un mensaje de error y termina el proceso*/
           $res = ['ok'=>false,'msj'=>'<span class="glyphicon glyphicon-bullhorn"></span> <strong>'.
           Yii::t('app','$articulo - No se incremento la cantidad de este articulo').'!</strong>'];
           echo json_encode($res);

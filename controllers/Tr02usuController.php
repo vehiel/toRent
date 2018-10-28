@@ -134,6 +134,11 @@ class Tr02usuController extends Controller
   public function actionDelete($nus_02in, $idp_02in)
   {
     $model = $this->findModel($nus_02in, $idp_02in);
+    if($model->tr11ordaLqs == NULL){
+      /*se puede eliminar*/
+      /*$model->delete();*/
+    }
+    /*se inactiva*/
     $model->est_02in = 0;
     if ($model->save()) {
       Yii::$app->getSession()->setFlash('success',

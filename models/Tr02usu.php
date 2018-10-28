@@ -86,6 +86,10 @@ class Tr02usu extends \yii\db\ActiveRecord implements IdentityInterface
     {
         return $this->hasMany(Tr05usuPri::className(), ['nus_02in' => 'nus_02in']);
     }
+    public function getTr11ordaLqs()
+    {
+        return $this->hasMany(Tr11ordAlq::className(), ['nus_ent_02in' => 'nus_02in']);
+    }
 
     /**
      * @return \yii\db\ActiveQuery
