@@ -2,11 +2,12 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
-use kartik\alert\AlertBlock;
 use kartik\daterange\DateRangePicker;
 use app\models\Tr06cli;
 use app\models\Tr11ordAlq;
 use yii\helpers\ArrayHelper;
+use \nterms\pagesize\PageSize;
+use kartik\alert\AlertBlock;
 
 // use app\models\Tr10her;
 
@@ -45,7 +46,7 @@ use yii\helpers\ArrayHelper;
 
 $this->title = Yii::t('app', 'Ordenes');
 $this->params['breadcrumbs'][] = $this->title;
-
+// Yii::$app->language = 'es';
 AlertBlock::widget([
   'type' => AlertBlock::TYPE_GROWL,
   'useSessionFlash' => true,
@@ -61,10 +62,21 @@ AlertBlock::widget([
   <p>
     <?= Html::a(Yii::t('app', 'Crear Orden'), ['create'], ['class' => 'btn btn-success']) ?>
   </p>
+  <div align="right">
 
+    <label><?= Yii::t('app','Mostrando:') ?></label>
+    <?php
+    /*con esta vara pone la paginacion, pone como defualt 10 items, y las sizes son las diferentes cantidades disponibles a mostrar*/
+    echo PageSize::widget(['defaultPageSize'=>10,
+    'label'=>Yii::t('app','Elementos'),'sizes'=>['2'=>2,'5'=>5,'10'=>10,'15'=>15,'20'=>20,'50'=>50],
+    'options' => ['class' => 'btn btn-default',
+    'title' => Yii::t('app','Cantidad de elementos por página')]]); ?>
+  </div>
   <?= GridView::widget([
     'dataProvider' => $dataProvider,
     'filterModel' => $searchModel,
+    /*se aplica el filtro a la tabla*/
+    'filterSelector' => 'select[name="per-page"]',
     'columns' => [
       ['class' => 'yii\grid\SerialColumn'],
 
@@ -79,9 +91,49 @@ AlertBlock::widget([
           }
         }
       ],
-      // 'fso_11dt',
       /*
-      muestra la fecha del movimiento y pone un filtro con rango de fechas */
+      muestra la fecha solicitud y pone un filtro con rango de fechas */
+      [
+        'attribute'=>'fcr_11dt',
+        // here we render the widget
+        'filter' => DateRangePicker::widget([
+          'model' => $searchModel,
+          /*se pone el attribute que esta en el modelo, para que a la hora de cargar o filtrar el DatePicker no de error -> invalid date*/
+          'attribute' => 'fcr_11dt',
+          'name'=>'fcr_11dt',
+          /*si no se pone esta line entonces la fcr_11dt es erronea 2018-59-3*/
+          'convertFormat' => true,
+          'pluginOptions' => [
+            'allowClear' => true,
+            /*el DatePicker se abre hacia la izquierda, para no haya problema con el borde de la pantalla*/
+            'opens'=>'left',
+            'locale' => [
+              'format' => 'Y-m-d'
+            ],
+          ],
+          'language' => 'es',
+          // 'pluginEvents'=>[
+          //   'cancel.daterangepicker'=>"function(ev, picker) {\$('#daterangeinput').val(''); // clear any inputs};"
+          // ],
+          /*muestra la lista de opciones predeterminadas*/
+          'presetDropdown'=>true,
+          /*evita que se pueda ingresar texto directamente en el input*/
+          'hideInput'=>true
+        ]),
+        'value'=>function($model){
+          if ($model->fcr_11dt !== null) {
+            $hora = date('H', strtotime($model->fcr_11dt));
+            $model->fcr_11dt = date('d-m-Y h:i:s', strtotime($model->fcr_11dt));
+            if($hora > 12){
+              return $model->fcr_11dt." PM";
+            }else{
+              return $model->fcr_11dt." AM";
+            }
+          }
+        }
+      ],
+      /*
+      muestra la fecha solicitud y pone un filtro con rango de fechas */
       [
         'attribute'=>'fso_11dt',
         // here we render the widget
@@ -110,12 +162,14 @@ AlertBlock::widget([
           'hideInput'=>true
         ]),
         'value'=>function($model){
-          $hora = date('H', strtotime($model->fso_11dt));
-          $model->fso_11dt = date('d-m-Y h:i:s', strtotime($model->fso_11dt));
-          if($hora > 12){
-            return $model->fso_11dt." PM";
-          }else{
-            return $model->fso_11dt." AM";
+          if ($model->fso_11dt !== null) {
+            $hora = date('H', strtotime($model->fso_11dt));
+            $model->fso_11dt = date('d-m-Y h:i:s', strtotime($model->fso_11dt));
+            if($hora > 12){
+              return $model->fso_11dt." PM";
+            }else{
+              return $model->fso_11dt." AM";
+            }
           }
         }
       ],
@@ -134,7 +188,7 @@ AlertBlock::widget([
           switch ($mode11->est_11in) {
             case 0:
             return "Inactivo";
-              break;
+            break;
             case 1:
             return "Activo";
             break;

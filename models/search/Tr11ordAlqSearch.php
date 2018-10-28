@@ -19,7 +19,7 @@ class Tr11ordAlqSearch extends Tr11ordAlq
   {
     return [
       [['ido_11in', 'ncl_06in', 'est_11in'], 'integer'],
-      [['fso_11dt', 'fre_11dt', 'fde_11dt'], 'safe'],
+      [['fso_11dt', 'fre_11dt', 'fde_11dt','fcr_11dt'], 'safe'],
       [['sto_11de', 'mto_11de'], 'number'],
       [['tr06cli.nom_06vc'],'safe'],
     ];
@@ -79,7 +79,7 @@ class Tr11ordAlqSearch extends Tr11ordAlq
 
     $query->orFilterWhere(['like', 'tr06cli.nom_06vc',
     $this->getAttribute('tr06cli.nom_06vc')])
-    
+
     ->orFilterWhere(['like', 'tr06cli.ap1_06vc',
     $this->getAttribute('tr06cli.nom_06vc')])
 
@@ -98,6 +98,21 @@ class Tr11ordAlqSearch extends Tr11ordAlq
       2018-10-24 00:00:00 to 2018-10-24 00:00:00 y esto no devolvera nada*/
       /*select * from tbl_caja_chica_movimiento where fecha between '2018-10-23 00:00:00' and '2018-10-24 23:59:59';*/
       $query->andFilterWhere(['between', 'fso_11dt',
+      $start_date.' 00:00:00', $end_date.' 23:59:59']);
+    }
+
+    /*vehiel 24/10/2018
+    si se tiene un valor y esta separado por un - */
+    if(!empty($this->fcr_11dt) && strpos($this->fcr_11dt, '-') !== false) {
+      /*se hace un explode que es similar a un split y
+      obtenemos ambas fechas separadas en variables*/
+      list($start_date, $end_date) = explode(' - ', $this->fcr_11dt);
+      /*le decimos que tambien filtre entre el rango de fechas obtenidas
+      como el campo en la base de datos es de tipo DateTime entonces debemos
+      espeficicar la hora, de lo contrario buscara de las 00:00:00 a las 00:00:00
+      2018-10-24 00:00:00 to 2018-10-24 00:00:00 y esto no devolvera nada*/
+      /*select * from tbl_caja_chica_movimiento where fecha between '2018-10-23 00:00:00' and '2018-10-24 23:59:59';*/
+      $query->andFilterWhere(['between', 'fcr_11dt',
       $start_date.' 00:00:00', $end_date.' 23:59:59']);
     }
 

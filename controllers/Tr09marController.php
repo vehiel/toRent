@@ -10,6 +10,9 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 
+
+date_default_timezone_set(Yii::$app->params['zonaHorario']);
+
 /**
  * Tr09marController implements the CRUD actions for Tr09mar model.
  */
@@ -120,10 +123,23 @@ class Tr09marController extends Controller
       $model = $this->findModel($id);
 
       if($model->tr10hers == null){
-        $model->delete();
-      }
-
+        if ($model->delete()) {
+          Yii::$app->getSession()->setFlash('success',
+          '<span class="glyphicon glyphicon-ok-sign"></span> <strong>'.
+          Yii::t('app','Marca eliminado').'!</strong>');
+          return $this->redirect(['index']);
+        }else{
+          Yii::$app->getSession()->setFlash('error',
+          '<span class="glyphicon glyphicon-bullhorn"></span> <strong>'.
+          Yii::t('app','No se pudo eliminar').'!</strong>');
+          return $this->redirect(['index']);
+        }
+      }else{
+        Yii::$app->getSession()->setFlash('error',
+        '<span class="glyphicon glyphicon-bullhorn"></span> <strong>'.
+        Yii::t('app','No se puede eliminar').'!</strong>');
         return $this->redirect(['index']);
+      }
     }
 
     /**

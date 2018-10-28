@@ -78,9 +78,9 @@ class Tr06cli extends \yii\db\ActiveRecord implements IdentityInterface
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getTr11alqs()
+    public function getTr11ordAlqs()
     {
-        return $this->hasMany(Tr11alq::className(), ['ncl_06in' => 'ncl_06in']);
+        return $this->hasMany(Tr11ordAlq::className(), ['ncl_06in' => 'ncl_06in']);
     }
 
 

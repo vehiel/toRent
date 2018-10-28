@@ -20,6 +20,7 @@ class Tr10herSearch extends Tr10her
         return [
             [['chr_10in', 'idn_08in', 'cgm_09in', 'vol_10in', 'vut_10in', 'gar_10in', 'tip_10in', 'est_10in', 'alq_10in'], 'integer'],
             [['des_10vc', 'ser_10vc'], 'safe'],
+            ['pre_10de','number'],
         ];
     }
 
@@ -71,7 +72,8 @@ class Tr10herSearch extends Tr10her
         ]);
 
         $query->andFilterWhere(['like', 'des_10vc', $this->des_10vc])
-            ->andFilterWhere(['like', 'ser_10vc', $this->ser_10vc]);
+            ->andFilterWhere(['like', 'ser_10vc', $this->ser_10vc])
+            ->andFilterWhere(['like', 'pre_10de', $this->pre_10de]);
 
         return $dataProvider;
     }

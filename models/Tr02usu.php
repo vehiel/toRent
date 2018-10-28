@@ -90,21 +90,20 @@ class Tr02usu extends \yii\db\ActiveRecord implements IdentityInterface
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getP04ins()
-    {
-        return $this->hasMany(Tr04pri::className(), ['idp_04in' => 'idp_04in'])->viaTable('tr05usu_pri', ['nus_02in' => 'nus_02in']);
-    }
+    // public function getTr04pris()
+    // {
+    //     return $this->hasMany(Tr04pri::className(), ['idp_04in' => 'idp_04in'])->viaTable('tr05usu_pri', ['nus_02in' => 'nus_02in']);
+    // }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getTr11alqs()
-    {
-        return $this->hasMany(Tr11alq::className(), ['nus_02in' => 'nus_02in']);
-    }
+    // public function getTr11alqs()
+    // {
+    //     return $this->hasMany(Tr11ordAlq::className(), ['nus_02in' => 'nus_02in']);
+    // }
 
-
-/**************************************************** metodo de IdentityInterface ************************************/
+/*creo que no se usa 27/10/2018 - vehiel ************************************************** metodo de IdentityInterface ************************************/
 
 /*se cambias los atributos para que coincidan con los de la base de datos*/
     public static function findIdentity($id)

@@ -1,5 +1,4 @@
 <?php
-
 namespace app\controllers;
 
 use Yii;
@@ -9,6 +8,9 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
+
+
+date_default_timezone_set(Yii::$app->params['zonaHorario']);
 
 /**
 * Tr02usuController implements the CRUD actions for Tr02usu model.
@@ -131,9 +133,18 @@ class Tr02usuController extends Controller
   */
   public function actionDelete($nus_02in, $idp_02in)
   {
-    $this->findModel($nus_02in, $idp_02in)->delete();
-
-    return $this->redirect(['index']);
+    $model = $this->findModel($nus_02in, $idp_02in);
+    $model->est_02in = 0;
+    if ($model->save()) {
+      Yii::$app->getSession()->setFlash('success',
+      '<span class="glyphicon glyphicon-ok-sign"></span> <strong>'.Yii::t('app','Usuario inactivo').'!</strong>');
+      return $this->redirect(['index']);
+    }else{
+      Yii::$app->getSession()->setFlash('error',
+      '<span class="glyphicon glyphicon-bullhorn"></span> <strong>'.
+      Yii::t('app','No se puede inactivar').'!</strong>');
+      return $this->redirect(['index']);
+    }
   }
 
   /**

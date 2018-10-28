@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\grid\GridView;
 use \nterms\pagesize\PageSize;
+use kartik\alert\AlertBlock;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\search\Tr06cliSearch */
@@ -10,6 +11,11 @@ use \nterms\pagesize\PageSize;
 
 $this->title = Yii::t('app', 'Clientes');
 $this->params['breadcrumbs'][] = $this->title;
+AlertBlock::widget([
+  'type' => AlertBlock::TYPE_GROWL,
+  'useSessionFlash' => true,
+  'delay' => 1000,
+]);
 ?>
 <div class="tr06cli-index">
 

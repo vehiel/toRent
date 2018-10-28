@@ -1,5 +1,4 @@
 <?php
-
 namespace app\controllers;
 
 use Yii;
@@ -10,6 +9,8 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use yii\web\UploadedFile;
+
+date_default_timezone_set(Yii::$app->params['zonaHorario']);
 
 /**
  * Tr10herController implements the CRUD actions for Tr10her model.
@@ -162,13 +163,28 @@ class Tr10herController extends Controller
     public function actionDelete($id)
     {
       $model = $this->findModel($id);
-      if(file_exists(Yii::getAlias('@app').'/web/uploads/herramienta/'.$model->ima_10vc)
-      && $model->ima_10vc != null){
-        unlink(Yii::getAlias('@app').'/web/uploads/herramienta/'.$model->ima_10vc);
-      }
-      $model->delete();
-
+      if($model->tr12detalqs == null){
+        if(file_exists(Yii::getAlias('@app').'/web/uploads/herramienta/'.$model->ima_10vc)
+        && $model->ima_10vc != null){
+          unlink(Yii::getAlias('@app').'/web/uploads/herramienta/'.$model->ima_10vc);
+        }
+        if ($model->delete()) {
+          Yii::$app->getSession()->setFlash('success',
+          '<span class="glyphicon glyphicon-ok-sign"></span> <strong>'.
+          Yii::t('app','Nombre eliminado').'!</strong>');
+          return $this->redirect(['index']);
+        }else{
+          Yii::$app->getSession()->setFlash('error',
+          '<span class="glyphicon glyphicon-bullhorn"></span> <strong>'.
+          Yii::t('app','No se pudo eliminar').'!</strong>');
+          return $this->redirect(['index']);
+        }
+      }else{
+        Yii::$app->getSession()->setFlash('error',
+        '<span class="glyphicon glyphicon-bullhorn"></span> <strong>'.
+        Yii::t('app','No se puede eliminar').'!</strong>');
         return $this->redirect(['index']);
+      }
     }
 
     /**

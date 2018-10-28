@@ -1,5 +1,4 @@
 <?php
-
 namespace app\controllers;
 
 use Yii;
@@ -8,6 +7,9 @@ use app\models\search\Tr11ordAlqSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\ForbiddenHttpException;
+
+date_default_timezone_set(Yii::$app->params['zonaHorario']);
 
 /**
  * Tr11ordAlqController implements the CRUD actions for Tr11ordAlq model.
@@ -35,6 +37,7 @@ class Tr11ordAlqController extends Controller
      */
     public function actionIndex()
     {
+      throw new ForbiddenHttpException(Yii::t('app', 'Acceso denegado'));
         $searchModel = new Tr11ordAlqSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -52,6 +55,7 @@ class Tr11ordAlqController extends Controller
      */
     public function actionView($id)
     {
+      throw new ForbiddenHttpException(Yii::t('app', 'Acceso denegado'));
         return $this->render('view', [
             'model' => $this->findModel($id),
         ]);
@@ -64,6 +68,7 @@ class Tr11ordAlqController extends Controller
      */
     public function actionCreate()
     {
+      throw new ForbiddenHttpException(Yii::t('app', 'Acceso denegado'));
         $model = new Tr11ordAlq();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -84,6 +89,7 @@ class Tr11ordAlqController extends Controller
      */
     public function actionUpdate($id)
     {
+      throw new ForbiddenHttpException(Yii::t('app', 'Acceso denegado'));
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -104,6 +110,7 @@ class Tr11ordAlqController extends Controller
      */
     public function actionDelete($id)
     {
+      throw new ForbiddenHttpException(Yii::t('app', 'Acceso denegado'));
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);

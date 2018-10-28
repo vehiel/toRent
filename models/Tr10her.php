@@ -98,9 +98,9 @@ class Tr10her extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getTr12detAlqs()
+    public function getTr12detalqs()
     {
-        return $this->hasMany(Tr12detAlq::className(), ['chr_10in' => 'chr_10in']);
+        return $this->hasMany(Tr12detalq::className(), ['chr_10in' => 'chr_10in']);
     }
 
     public function getNombreHerramienta()

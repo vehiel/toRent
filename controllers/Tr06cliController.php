@@ -1,5 +1,4 @@
 <?php
-
 namespace app\controllers;
 
 use Yii;
@@ -9,6 +8,9 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
+
+
+date_default_timezone_set(Yii::$app->params['zonaHorario']);
 
 /**
 * Tr06cliController implements the CRUD actions for Tr06cli model.
@@ -127,9 +129,25 @@ class Tr06cliController extends Controller
   */
   public function actionDelete($idp_06in, $ncl_06in)
   {
-    $this->findModel($idp_06in, $ncl_06in)->delete();
-
-    return $this->redirect(['index']);
+    $model = $this->findModel($idp_06in, $ncl_06in);
+    if($model->tr11ordAlqs == null){
+      if ($model->delete()) {
+        Yii::$app->getSession()->setFlash('success',
+        '<span class="glyphicon glyphicon-ok-sign"></span> <strong>'.
+        Yii::t('app','Cliente eliminado').'!</strong>');
+        return $this->redirect(['index']);
+      }else{
+        Yii::$app->getSession()->setFlash('error',
+        '<span class="glyphicon glyphicon-bullhorn"></span> <strong>'.
+        Yii::t('app','No se pudo eliminar').'!</strong>');
+        return $this->redirect(['index']);
+      }
+    }else{
+      Yii::$app->getSession()->setFlash('error',
+      '<span class="glyphicon glyphicon-bullhorn"></span> <strong>'.
+      Yii::t('app','Este cliente no se puede eliminar').'!</strong>');
+      return $this->redirect(['index']);
+    }
   }
 
   /**

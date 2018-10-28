@@ -1,5 +1,4 @@
 <?php
-
 namespace app\controllers;
 
 use Yii;
@@ -12,6 +11,9 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
+
+
+date_default_timezone_set(Yii::$app->params['zonaHorario']);
 
 /**
 * Tr12detalqController implements the CRUD actions for Tr12detalq model.
@@ -105,86 +107,149 @@ class Tr12detalqController extends Controller
     $model11 = new Tr11ordAlq();
     /*si se cargan ambos modelos*/
     if ($model11->load(Yii::$app->request->post()) && $model12->load(Yii::$app->request->post())) {
-      $m = Tr11ordAlq::find()->where(['ncl_06in'=>$model11->ncl_06in])->andWhere(['IN','est_11in',[1,2]])->one();
-      /*si se obtuvo la orden*/
-      if ($m) {
-        /*se ingresa el id orden en model de tbl 12*/
-        $model12->ido_11in = $m['ido_11in'];
+      /*buscamos la orden con numero de cliente, ademas esta orden debe estar con estado 1 o 2 (Activo o Solicitado)*/
+      // $orden = Tr11ordAlq::find(['ido_11in'=>$idOrden])->andWhere(['IN','est_11in',[1,2]])->one();
+      $orden = Tr11ordAlq::find()->where(['ncl_06in'=>$model11->ncl_06in])->andWhere(['IN','est_11in',[1,2]])->one();
+      /*si existe una orden activa para este cliente*/
+      if ($orden !== null) {
+        /*se busca en la tbl 12 donde el id orden sea == $orden['ido_11in'], ademas donde el codigo herramienta se igual al seleccionado
+        $model12->chr_10in, si se llega a este punto es que la orden esta activa, por lo tanto no se tiene que volver a validar.
+        si todo esto se cumple, es que existe una orden activa para el cliente y
+        la cantidad de esa herramienta se debe aumentar y no crear un nuevo articulo en tbl 12*/
+        $articulo = Tr12detalq::findOne(['ido_11in'=>$orden['ido_11in'],'chr_10in'=>$model12->chr_10in]);
+        /*si la herramienta ya esta en el carrito*/
+        if($articulo){
+  /**********************************************************************************************************************************************/
+  /**************************************ariculo ya esta en carrito*********************************************************************************/
+  /**********************************************************************************************************************************************/
+          /*sumamos la cantidad actual con la ingresada
+          $model12 es el que viene del formulario*/
+          $articulo->can_12in = $articulo->can_12in+ $model12->can_12in;
+          /*se vuelve a calcular el monto total
+          monto total es = el mismo + la cantidad total de herramientas en este articulo
+           * el precio que ya tiene la herramienta*/
+          $articulo->mto_12de += $model12->can_12in * $articulo->pre_12de;
+          if($articulo->save()){
+            /*si guardamos el articulo, entonces actualizamos el monto total de la orden
+            se usa $orden porque es el modelo guardado, si se utiliza $model11 creara una nueva orden*/
+            $orden->sto_11de += $model12->can_12in*$articulo->pre_12de;
+            $orden->mto_11de += $model12->can_12in*$articulo->pre_12de;
+            if($orden->save()){
+              /*se pone un mensaje de success y redirecciona a view*/
+              Yii::$app->getSession()->setFlash('success',
+              '<span class="glyphicon glyphicon-ok-sign"></span> <strong>'.
+              Yii::t('app','Se incremento la cantidad de este articulo').'!</strong>');
+              return $this->redirect(['view','id'=>$orden->ido_11in]);
+            }else{/* fin if($orden->save())*/
+              /*se pone un mensaje de error y redirecciona a index*/
+              Yii::$app->getSession()->setFlash('error',
+              '<span class="glyphicon glyphicon-bullhorn"></span> <strong>'.
+              Yii::t('app','$orden - No se incremento la cantidad de este articulo').'!</strong>');
+              return $this->redirect(['index']);
+            }
+          }else{/*fin if($articulo->save())*/
+            /*se pone un mensaje de error y redirecciona a index*/
+            Yii::$app->getSession()->setFlash('error',
+            '<span class="glyphicon glyphicon-bullhorn"></span> <strong>'.
+            Yii::t('app','$articulo - No se incremento la cantidad de este articulo').'!</strong>');
+            return $this->redirect(['index']);
+          }
+        } /* fin   if($articulo)*/
+  /**********************************************************************************************************************************************/
+  /***********************articulo no esta en carrito, agregar*********************************************************************************/
+  /**********************************************************************************************************************************************/
+        /*$model12 viene del formulario
+        se ingresa el id orden en model de tbl 12, la orden es la que
+        ya esta ingresada, por eso se usa  $orden*/
+        $model12->ido_11in = $orden['ido_11in'];
         /*buscamos la articulo que se esta agregando al carrito, para obtener el precio*/
         $her = Tr10her::findOne($model12->chr_10in);
         /*el precio del articulo en tbl 12 es = al precio de la herramienta*/
         $model12->pre_12de = $her['pre_10de'];
-        $model12->mto_12de =  $model12->pre_12de * $model12->can_12in;
+        /*la cantidad ingresada en el formulario*/
+        $model12->mto_12de =  $her['pre_10de'] * $model12->can_12in;
+        /*crea elnuevo articulo*/
         if($model12->save()){
           /*si guardamos el articulo, entonces actualizamos el monto total de la orden
-          se usa $m porque es el modelo guardado, si se utiliza $model11 creara una nueva orden*/
-          $m->sto_11de = $m->sto_11de+$model12->mto_12de;
-          $m->mto_11de = $m->mto_11de+$model12->mto_12de;
+          se usa $orden porque es el modelo guardado, si se utiliza $model11 creara una nueva orden*/
+          $orden->sto_11de += $model12->mto_12de;
+          $orden->mto_11de += $model12->mto_12de;
           /*actualizamos la orden con los nuevos datos*/
-          if($m->save()){
+          if($orden->save()){
             /*se pone un mensaje de success y redirecciona a index*/
             Yii::$app->getSession()->setFlash('success',
-            '<span class="glyphicon glyphicon-ok-sign"></span> <strong>'.Yii::t('app','Carrito Actualizado').'!</strong>');
-            return $this->redirect(['index']);
+            '<span class="glyphicon glyphicon-ok-sign"></span> <strong>'.Yii::t('app','Artículo Agregado').'!</strong>');
+            return $this->redirect(['view','id'=>$orden['ido_11in']]);
           }else{
             /*se pone un mensaje de error y redirecciona a index*/
             Yii::$app->getSession()->setFlash('error',
-            '<span class="glyphicon glyphicon-bullhorn"></span> <strong>'.Yii::t('app','No se pudo actualizar la orden con los montos actualizados').'!</strong>');
+            '<span class="glyphicon glyphicon-bullhorn"></span> <strong>'.Yii::t('app','No se pudo actualizar la orden con los montos actualizados, se ELIMINO el articulo').'!</strong>');
+            /*elimina el articulo agregado, los montos no se actualizaron, por lo tanto no se tiene que recalcular*/
+            $model12->delete();
             return $this->redirect(['index']);
           }
         }else{/* fin if($model12->save()){*/
           /*se pone un mensaje de error y redirecciona a index*/
           Yii::$app->getSession()->setFlash('error',
-          '<span class="glyphicon glyphicon-bullhorn"></span> <strong>'.Yii::t('app','No se pudo añadir el articulo al carrito').'!</strong>');
+          '<span class="glyphicon glyphicon-bullhorn"></span> <strong>'.Yii::t('app','No se pudo añadir el artículo al carrito').'!</strong>');
           return $this->redirect(['index']);
         }
-      } /* fin if ($m)*/
-      /******************************************fin if orden existe, inicio creacion nueva orden************************************************************/
+      } /* fin if ($orden)*/
+/**********************************************************************************************************************************************/
+/**********************************************************************************************************************************************/
+/******************fin if orden existe, inicio creacion nueva orden************************************************************/
 
       /* si se llega a este punto es que el cliente no tiene ninguna orden activa, por lo tanto se procede a crear*/
-      /*el estado es activo al principio*/
+      /*$model11 y $model12 vienen del formulario.
+      el estado es activo al principio*/
       $model11->est_11in = 1;
       /*se ingresa fecha solicitud de forma automatica*/
-      $model11->fso_11dt = Date('Y/m/d H:i:s');
+      $model11->fcr_11dt = Date('Y/m/d H:i:s');
       /*guardamos la orden de alquiler en la tbl 11*/
       if($model11->save()){
         /*si se guarda entonces obtenemos el id que genero y se lo pasamos a model de la tbl 12*/
         $model12->ido_11in = $model11->ido_11in;
-        /*buscamos la articulo que se esta agregando al carrito, para obtener el precio*/
+        /*buscamos la herramienta que se esta agregando al carrito, para obtener el precio*/
         $her = Tr10her::findOne($model12->chr_10in);
         /*el precio del articulo en tbl 12 es = al precio de la herramienta*/
         $model12->pre_12de = $her['pre_10de'];
-        $model12->mto_12de =  $model12->pre_12de * $model12->can_12in;
+        $model12->mto_12de =  $her['pre_10de'] * $model12->can_12in;
         /*se guarda el articulo en la tbl 12*/
         if($model12->save()){
-          /* como la orden recien se esta creando, entonces el monto total de tr 11 es igual que el de tr12 porque solo tiene un articulo
-          actualizamos el modelo de la tbl 11 recien guardado y le pasamos el subtotal y el monto total*/
+          /* como la orden recien se esta creando, entonces el monto total de tr 11 es igual que el de tr12 porque solo tiene un articulo.
+          actualizamos la orden recien guardada y le pasamos el subtotal y el monto total*/
           $model11->sto_11de = $model12->mto_12de;
           $model11->mto_11de = $model12->mto_12de;
           /*actualizamos el monto total de la orden con los nuevos datos*/
           if($model11->save()){
-            /*se pone un mensaje de success y redirecciona a index*/
+            /*se pone un mensaje de success y redirecciona a view*/
             Yii::$app->getSession()->setFlash('success',
-            '<span class="glyphicon glyphicon-ok-sign"></span> <strong>'.Yii::t('app','Guardado').'!</strong>');
-            return $this->redirect(['index']);
+            '<span class="glyphicon glyphicon-ok-sign"></span> <strong>'.Yii::t('app','Orden Creada').'!</strong>');
+            return $this->redirect(['view','id'=>$model11->ido_11in]);
           }else{
             /*se pone un mensaje de error y redirecciona a index*/
             Yii::$app->getSession()->setFlash('error',
-            '<span class="glyphicon glyphicon-bullhorn"></span> <strong>'.Yii::t('app','No se pudo actualizar orden con monto total').'!</strong>');
+            '<span class="glyphicon glyphicon-bullhorn"></span> <strong>'.Yii::t('app','No se pudo crear la orden').'!</strong>');
+            /*si los datos de la orden no se pueden actualiza, no se puede dejar la orden sin monto Total
+            se eliminan el articulo ingresado y se elimina la orden
+            la orden esta recien creada, no afecta si se elimina*/
+            $model12->delete();
+            $model11->delete();
             return $this->redirect(['index']);
           }
         }else{/* fin if($model12->save()){*/
-          /*se pone un mensaje de error y redirecciona a index*/
+          /*se pone un mensaje de error y redirecciona a View
+          la orden no se elimina, se deja sin el primer articulo*/
           Yii::$app->getSession()->setFlash('error',
-          '<span class="glyphicon glyphicon-bullhorn"></span> <strong>'.Yii::t('app','No se pudo guardar el articulo').'!</strong>');
-          return $this->redirect(['index']);
+          '<span class="glyphicon glyphicon-bullhorn"></span> <strong>'.Yii::t('app','Orden Creada, pero ocurrio un error al ingresar el artículo').'!</strong><br />Trate de ingresarlo de nuevo');
+          return $this->redirect(['view','id'=>$model11->ido_11in]);
         }
       }else{ /*fin primer if($model11->save())*/
         Yii::$app->getSession()->setFlash('error',
         '<span class="glyphicon glyphicon-bullhorn"></span> <strong>'.Yii::t('app','No se pudo guardar la orden').'!</strong>');
         return $this->redirect(['index']);
       }
-    }
+    } /* fin if ($model11->load(Yii::$app->request->post()) && $model12->load(Yii::$app->request->post()))*/
 
     return $this->render('create', [
       'model12' => $model12,
@@ -202,13 +267,18 @@ class Tr12detalqController extends Controller
   public function actionUpdate($id)
   {
     $model11 = Tr11ordAlq::findOne($id);
+    if($model11 == null){
+      throw new NotFoundHttpException(Yii::t('app', 'tr 11 - Recurso no encontrado.'));
+    }
     if($model11->est_11in != 1){ /*estado 1 => Activo, solo si esta activo se puede editar, en los demas estado no*/
       Yii::$app->getSession()->setFlash('error',
       '<span class="glyphicon glyphicon-bullhorn"></span> <strong>'.Yii::t('app','Esta orden no se puede editar').'!</strong>');
       return $this->redirect(['index']);
     }
     $model12 = Tr12detalq::findOne(['ido_11in'=>$model11->ido_11in]);
-
+    if($model12 == null){
+      throw new NotFoundHttpException(Yii::t('app', 'tr 12 - Recurso no encontrado.'));
+    }
     if ($model11->load(Yii::$app->request->post()) && $model12->load(Yii::$app->request->post())) {
       return $this->redirect(['index']);
     }
@@ -230,15 +300,21 @@ class Tr12detalqController extends Controller
   {
     /*obtenemos el modelo de la tbl 11 donde id orden == $id*/
     $model11 = Tr11ordAlq::findOne($id);
-    /*si esta orden esta en un estado diferente de Activo (1), no se puede Inactivar*/
+    if($model11 == null){
+      throw new NotFoundHttpException(Yii::t('app', 'tr 11 - Recurso no encontrado.'));
+    }
+    /*si esta orden esta en un estado diferente de Activo (1), no se puede Eliminar*/
     if($model11->est_11in != 1){
       Yii::$app->getSession()->setFlash('error',
       '<span class="glyphicon glyphicon-bullhorn"></span> <strong>'.
-      Yii::t('app','No se pudo Inactivar esta orden').'!</strong>');
+      Yii::t('app','No se pudo Eliminar esta orden').'!</strong>');
       return $this->redirect(['index']);
     }
     /*si se puede eliminar buscamos los modelos de tbl 12 que estan ligados a la orden a eliminar*/
     $model12 = Tr12detalq::find(['ido_11in'=>$id])->all();
+    if($model12 == null){
+      throw new NotFoundHttpException(Yii::t('app', 'tr 11 - Recurso no encontrado.'));
+    }
     /*se hace un foreach para eliminar cada articulo*/
     foreach ($model12 as $key) {
       $key->delete();
@@ -269,21 +345,26 @@ class Tr12detalqController extends Controller
   public function actionAgregarArticulo(){
     $codigoHerramienta = (int)$_POST['cod'];
     $cantidad = (int)$_POST['can'];
-    $id_orden = (int)$_POST['id_orden'];
-
+    $idOrden = (int)$_POST['id_orden'];
+    // $codigoHerramienta = 5;
+    // $cantidad = 1;
+    // $idOrden = 7;
 
     // $model11 = new Tr11ordAlq;
     // if ($model12->load(Yii::$app->request->post())) {
     /*buscamos la orden con numero de cliente, ademas esta orden debe estar con estado 1 o 2 (Activo o Solicitado)*/
-    $orden = Tr11ordAlq::find(['ido_11in'=>$id_orden])->andWhere(['IN','est_11in',[1,2]])->one();
+    $orden = Tr11ordAlq::find(['ido_11in'=>$idOrden])->andWhere(['IN','est_11in',[1,2]])->one();
     if ($orden !== null) {
-      /*se busca en la tbl 12 donde el id orden sea == $id_orden, ademas donde el codigo herramienta se igual al seleccionado
+      /*se busca en la tbl 12 donde el id orden sea == $idOrden, ademas donde el codigo herramienta se igual al seleccionado
       $model12->chr_10in, si se llega a este punto es que la orden esta activa, por lo tanto no se tiene que volver a validar.
       si todo esto se cumple, es que existe una orden activa para el cliente y
       la cantidad de esa herramienta se debe aumentar y no crear un nuevo articulo en tbl 12*/
-      $articulo = Tr12detalq::findOne(['ido_11in'=>$id_orden,'chr_10in'=>$codigoHerramienta]);
+      $articulo = Tr12detalq::findOne(['ido_11in'=>$idOrden,'chr_10in'=>$codigoHerramienta]);
       /*si la herramienta ya esta en el carrito*/
       if($articulo){
+/**********************************************************************************************************************************************/
+/**************************************ariculo ya esta en carrito*********************************************************************************/
+/**********************************************************************************************************************************************/
         /*sumamos la cantidad actual con la ingresada*/
         $articulo->can_12in = $articulo->can_12in+ $cantidad;
         /*se vuelve a calcular el monto total
@@ -291,12 +372,12 @@ class Tr12detalqController extends Controller
         $articulo->mto_12de = $articulo->can_12in * $articulo->pre_12de;
         if($articulo->save()){
           /*si guardamos el articulo, entonces actualizamos el monto total de la orden
-          se usa $orden porque es el modelo guardado, si se utiliza $model11 creara una nueva orden*/
-          $monto_total = $articulo->pre_12de * $cantidad;
-          // $orden->sto_11de = $orden->sto_11de + $monto_total;
-          // $orden->mto_11de = $orden->mto_11de + $monto_total;
-          $orden->sto_11de = $orden->sto_11de+$articulo->mto_12de;
-          $orden->mto_11de = $orden->mto_11de+$articulo->mto_12de;
+          se usa $orden porque es el modelo guardado, si se utiliza $model11 creara una nueva orden.
+          al subtotal y monto total se le tiene que sumar la nueva cantidad * precio, si se suma
+          el monto total del articulo esta sumando doble, porque previamente ya estaba sumado el monto total
+          de ese articulo con la cantidad anterior*/
+          $orden->sto_11de += ($cantidad*$articulo->pre_12de);
+          $orden->mto_11de += ($cantidad*$articulo->pre_12de);
           if($orden->save()){
             /*se pone un mensaje de success y termina el proceso*/
             $res = ['ok'=>true,'msj'=>'<span class="glyphicon glyphicon-ok-sign"></span> <strong>'.
@@ -310,7 +391,7 @@ class Tr12detalqController extends Controller
             echo json_encode($res);
             exit();
           }
-        }else{
+        }else{ /* fin if($articulo->save())*/
           /*se pone un mensaje de success y termina el proceso*/
           $res = ['ok'=>false,'msj'=>'<span class="glyphicon glyphicon-bullhorn"></span> <strong>'.
           Yii::t('app','$articulo - No se incremento la cantidad de este articulo').'!</strong>'];
@@ -318,15 +399,20 @@ class Tr12detalqController extends Controller
           exit();
         }
       } /* fin if($articulo)*/
+/**********************************************************************************************************************************************/
+/***********************articulo no esta en carrito, agregar*********************************************************************************/
+/**********************************************************************************************************************************************/
       /* se crea un nuevo detalle*/
       $model12 = new Tr12detalq();
       /*se ingresa el id orden en model de tbl 12*/
-      $model12->ido_11in = $orden['ido_11in'];
+      $model12->ido_11in = $idOrden;
       /*buscamos la articulo que se esta agregando al carrito, para obtener el precio*/
-      $her = Tr10her::findOne($model12->chr_10in);
+      $her = Tr10her::findOne($codigoHerramienta);
       /*el precio del articulo en tbl 12 es = al precio de la herramienta*/
+      $model12->chr_10in = $codigoHerramienta;
       $model12->pre_12de = $her['pre_10de'];
-      $model12->mto_12de =  $model12->pre_12de * $model12->can_12in;
+      $model12->can_12in = $cantidad;
+      $model12->mto_12de =  $her['pre_10de'] * $cantidad;
       if($model12->save()){
         /*si guardamos el articulo, entonces actualizamos el monto total de la orden
         se usa orden porque es el modelo guardado, si se utiliza $model11 creara una nueva orden*/
@@ -336,13 +422,15 @@ class Tr12detalqController extends Controller
         if($orden->save()){
           /*se pone un mensaje de success y termina el proceso*/
           $res = ['ok'=>true,'msj'=>'<span class="glyphicon glyphicon-ok-sign"></span> <strong>'.
-          Yii::t('app','Carrito Actualizado').'!</strong>'];
+          Yii::t('app','Artículo Agregado').'!</strong>'];
           echo json_encode($res);
           exit();
         }else{
           /*se pone un mensaje de success y termina el proceso*/
           $res = ['ok'=>false,'msj'=>'<span class="glyphicon glyphicon-bullhorn"></span> <strong>'.
-          Yii::t('app','No se pudo actualizar la orden con los montos actualizados').'!</strong>'];
+          Yii::t('app','No se pudo actualizar la orden con los montos actualizados, se ELIMINO el articulo').'!</strong>'];
+          /*elimina el articulo agregado, los montos no se actualizaron, por lo tanto no se tiene que recalcular*/
+          $model12->delete();
           echo json_encode($res);
           exit();
         }
