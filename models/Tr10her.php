@@ -75,7 +75,7 @@ class Tr10her extends \yii\db\ActiveRecord
             'file'=> Yii::t('app', 'Imágen'),
             'ima_10vc' => Yii::t('app', 'Imágen'),
             'can_10in' => Yii::t('app', 'Cantidad'),
-            'pre_10de' => Yii::t('app', 'Precio'),
+            'pre_10de' => Yii::t('app', 'Precio / Mes'),
         ];
     }
 

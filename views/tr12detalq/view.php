@@ -10,6 +10,7 @@ use kartik\select2\Select2;
 use yii\helpers\ArrayHelper;
 use kartik\alert\AlertBlock;
 use \nterms\pagesize\PageSize;
+use kartik\date\DatePicker;
 
 use app\models\Tr10her;
 use app\models\Tr09mar;
@@ -24,11 +25,15 @@ use app\models\Tr12detalq;
 $this->title = Yii::t('app','Orden: ').$model11->ido_11in;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Ordenes'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
-AlertBlock::widget([
-  'type' => AlertBlock::TYPE_GROWL,
-  'useSessionFlash' => true,
-  'delay' => 1000,
-]);
+/*si esta vista es invocada desde actionSolicitarEntregarOrden no se mostraran los flashes como growl*/
+if ($showAlertBlock) {
+  echo AlertBlock::widget([
+    'type' => AlertBlock::TYPE_GROWL,
+    'useSessionFlash' => true,
+    'delay' => 1000,
+  ]);
+}
+
 
 $model12 = new Tr12detalq();
 ?>
@@ -85,7 +90,7 @@ $model12 = new Tr12detalq();
                     return  "Activo";
                     break;
                     case 2:
-                    return  "Slicitado";
+                    return  "Solicitado";
                     break;
                     case 3:
                     return  "Retirado";
@@ -106,6 +111,63 @@ $model12 = new Tr12detalq();
         </div> <!--- fin class="panel-boy" -->
       </div> <!--- fin class="panel panel-default" -->
       <div id="divInputAgregarArticulo col-lg-12 col-md-12" >
+        <div class="col-md-12 col-lg-12">
+          <div class="col-lg-12 col-md-12" >
+            <?php
+            if($model11->est_11in === 1){
+              /*************** eliminar ******************************/
+              echo Html::a(Yii::t('app', 'Solicitar (para prueba)'), ['solicitar-orden', 'idOrden' => $model11->ido_11in], [
+                'class' => 'btn btn-primary',
+                'data' => [
+                  'confirm' => Yii::t('app', 'Esta seguro desea solicitar este alquiler?'),
+                  'method' => 'post',
+                ],
+              ]);
+              /*************** eliminar ******************************/
+              echo Html::button(Yii::t('app', 'Solicitar y Entregar'),
+              [
+                'class' => 'btn btn-danger',
+                'id'=>'btnSolicitarEntregar',
+                // 'onclick'=>'javascript:solicitarEntregar('.$model11->ido_11in.')',
+                'type'=>'button',
+                'data-toggle'=>'modal',
+                'data-target'=>'#modalFechaDevolucion',
+              ]);
+            }?>
+            <?php
+            if($model11->est_11in === 3){
+              echo Html::a(Yii::t('app', 'Finaliar Alquiler'), ['finalizar-orden', 'idOrden' => $model11->ido_11in], [
+                'class' => 'btn btn-primary',
+                'data' => [
+                  'confirm' => Yii::t('app', 'Esta seguro desea finalizar este alquiler?'),
+                  'method' => 'post',
+                ],
+              ]);
+            }?>
+            <?php
+            if($model11->est_11in === 2) {
+              echo Html::a(Yii::t('app', 'Descartar'), ['descartar-orden', 'idOrden' => $model11->ido_11in], [
+                'class' => 'btn btn-danger',
+                'data' => [
+                  'confirm' => Yii::t('app', 'Esta seguro que quiere descartar este alquiler?'),
+                  'method' => 'post',
+                ],
+              ]);
+            }?>
+            <?php
+            if($model11->est_11in === 2) {
+              echo Html::button(Yii::t('app', 'Entregar'),
+              [
+                'class' => 'btn btn-success',
+                'id'=>'btnSolicitarEntregar',
+                // 'onclick'=>'javascript:solicitarEntregar('.$model11->ido_11in.')',
+                'type'=>'button',
+                'data-toggle'=>'modal',
+                'data-target'=>'#modalFechaDevolucionEntrega',
+              ]);
+            }?>
+          </div> <!-- fin class="col-lg-4 col-md-4"-->
+        </div>
         <div class="col-lg-12 col-md-12">
           <hr />
         </div>
@@ -166,7 +228,7 @@ $model12 = new Tr12detalq();
             <label><?= Yii::t('app','Mostrando:') ?></label>
             <?php
             /*con esta vara pone la paginacion, pone como defualt 10 items, y las sizes son las diferentes cantidades disponibles a mostrar*/
-             echo PageSize::widget(['defaultPageSize'=>10,
+            echo PageSize::widget(['defaultPageSize'=>10,
             'label'=>Yii::t('app','Elementos'),'sizes'=>['2'=>2,'5'=>5,'10'=>10,'15'=>15,'20'=>20,'50'=>50],
             'options' => ['class' => 'btn btn-default',
             'title' => Yii::t('app','Cantidad de elementos por página')]]); ?>
@@ -216,15 +278,82 @@ $model12 = new Tr12detalq();
       ]);
       echo '<div id="modalContent"></div>';
       Modal::end();
+      /**************************/
+      Modal::begin([
+        'options' => [
+          'id'=>'modalFechaDevolucion',
+        ],
+        'size'=>'modal-md',
+      ]);
+      echo '
+      <div class="modal-body">
+      <label for="fechaDevolucion">Fecha Devolución</label>'.
+      DatePicker::widget([
+        'name' => 'fechaDevolucion',
+        'type' => DatePicker::TYPE_COMPONENT_PREPEND,
+        'pluginOptions' => [
+          'autoclose'=>true,
+          'format' => 'dd-mm-yyyy'
+        ],
+        'options'=>['id'=>'fechaDevolucion']
+      ])
+      .'</div>
+      <div class="modal-footer">
+      <button type="button" class="btn btn-danger" onclick="javascript:solicitarEntregar('.$model11->ido_11in.');">Solicitar y Entregar</button>
+      </div>';
+      Modal::end();
+      /**************************/
+      Modal::begin([
+        'options' => [
+          'id'=>'modalFechaDevolucionEntrega',
+        ],
+        'size'=>'modal-md',
+      ]);
+      echo '
+      <div class="modal-body">
+      <label for="fechaDevolucionEntrega">Fecha Devolución</label>'.
+      DatePicker::widget([
+        'name' => 'fechaDevolucionEntrega',
+        'type' => DatePicker::TYPE_COMPONENT_PREPEND,
+        'pluginOptions' => [
+          'autoclose'=>true,
+          'format' => 'dd-mm-yyyy'
+        ],
+        'options'=>['id'=>'fechaDevolucionEntrega']
+      ])
+      .'</div>
+      <div class="modal-footer">
+      <button type="button" class="btn btn-success" onclick="javascript:entregarOrden('.$model11->ido_11in.');">Entregar</button>
+      </div>';
+      Modal::end();
       ?>
       <script src="https://code.jquery.com/jquery-3.3.1.min.js"
       integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
       crossorigin="anonymous"></script>
       <script>
-      // $('#agregarArticulo').on('submit',function(event){
-      //   event.preventDefault();
-      //   // alert("submit");
-      // });
+      function entregarOrden(id){
+        var fechaDevolucion = $('#fechaDevolucionEntrega').val();
+        if(fechaDevolucion != ""){
+          fechaDevolucion += ' 23:59:00';
+          $(location).attr('href','?r=tr12detalq/entregar-orden&idOrden='+id+'&fechaDevolucion='+fechaDevolucion);
+        }
+        // var fecha = prompt("Ingrese fecha de confirmación", "Harry Potter");
+        // if (fecha != null) {
+        //   alert("fecha: "+fecha);
+        // }
+      } /* fin solicitarEntregar*/
+
+      function solicitarEntregar(id){
+        var fechaDevolucion = $('#fechaDevolucion').val();
+        if(fechaDevolucion != ""){
+          fechaDevolucion += ' 23:59:00';
+          $(location).attr('href','?r=tr12detalq/solicitar-entregar-orden&idOrden='+id+'&fechaDevolucion='+fechaDevolucion);
+        }
+        // var fecha = prompt("Ingrese fecha de confirmación", "Harry Potter");
+        // if (fecha != null) {
+        //   alert("fecha: "+fecha);
+        // }
+      } /* fin solicitarEntregar*/
       function agregarArticulo(id){
         var cod = parseInt($('#inputCodigoHerramienta').val());
         var can = parseInt($('#inputCantidad').val());
@@ -241,8 +370,6 @@ $model12 = new Tr12detalq();
           $('.field-inputCantidad').find('.help-block').text("Cantidad no puede estar vacio.");
           return;
         }
-        // alert("cod: "+cod+" can: "+can);
-        // return;
         $.ajax({
           'url':'?r=tr12detalq/agregar-articulo',
           'dataType':'json',
@@ -271,9 +398,7 @@ $model12 = new Tr12detalq();
             $.growl.error({ message: '<span class="glyphicon glyphicon-bullhorn"></span> <strong>Error Interno, comuniquese con soporte!</strong>'});
           }
         });
-        // $('#modalAgregarArticulo').modal('show').find('#modalContent').load('?r=tr12detalq/agregar-articulo&id_orden=7')
-
-
+        // $('#modalAgregarArticulo').modal('show').find('#modalContent').load('?r=tr12detalq/agregar-articulo&id_orden=7');
       }
       $(function(){ /* doc ready*/
         // $.growl.notice({ message: '<span class="glyphicon glyphicon-ok-sign"></span> <strong>Carrito Actualizado'});

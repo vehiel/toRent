@@ -64,10 +64,11 @@ use kartik\date\DatePicker;
               'allowClear' => true
             ],
             ]) ?>
-            <?
+            <?php
             if($model->isNewRecord) {
-              echo $form->field($model, 'con_02vc')->textInput(['maxlength' => true, 'value'=>'torent2018', 'readonly'=>true]) ?>
+              echo $form->field($model, 'con_02vc')->textInput(['maxlength' => true, 'value'=>'torent2018', 'readonly'=>true]);
             }
+            ?>
           </div>
           <div class="form-group col-lg-12 col-md-12">
             <?= Html::submitButton(Yii::t('app', 'Guardar'), ['class' => 'btn btn-success']) ?>

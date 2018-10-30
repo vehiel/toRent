@@ -65,7 +65,7 @@ class Tr11ordAlq extends \yii\db\ActiveRecord
       'fre_11dt' => Yii::t('app', 'Fecha Retiro'),
       'fde_11dt' => Yii::t('app', 'Fecha Devolución'),
       'sto_11de' => Yii::t('app', 'Subtotal'),
-      'mto_11de' => Yii::t('app', 'Monto Total'),
+      'mto_11de' => Yii::t('app', 'Monto Total / Mes'),
       'est_11in' => Yii::t('app', 'Estado'),
       'fcr_11dt'=> Yii::t('app', 'Fecha Creación'),
       'nus_ent_02in' => Yii::t('app','Usuario Entrega')

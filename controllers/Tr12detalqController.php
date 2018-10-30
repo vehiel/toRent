@@ -3,9 +3,12 @@ namespace app\controllers;
 
 use Yii;
 // use yii\helpers\Html;
-use app\models\Tr12detalq;
-use app\models\Tr11ordAlq;
+use app\models\Tr08nhr;
+use app\models\Tr09mar;
 use app\models\Tr10her;
+use app\models\Tr11ordAlq;
+use app\models\Tr12detalq;
+
 use app\models\search\Tr12detalqSearch;
 use app\models\search\Tr11ordAlqSearch;
 use yii\web\Controller;
@@ -83,19 +86,24 @@ class Tr12detalqController extends Controller
   * @return mixed
   * @throws NotFoundHttpException if the model cannot be found
   */
-  public function actionView($id)
+  /*el parametro $alertBlock se usa para mostrar los flashes como growl o no,
+  si este action es llamada desde actionSolicitarEntregarOrden los mensajer so
+  mostraran sin growl*/
+  public function actionView($id,$alertBlock = true)
   {
 
     $model11 = Tr11ordAlq::findOne($id);
     if ($model11 == null) {
       throw new NotFoundHttpException(Yii::t('app', 'Recurso no encontrado.'));
     }
+
     $searchModel = new Tr12detalqSearch();
     $dataProvider = $searchModel->search(Yii::$app->request->queryParams,$id);
     return $this->render('view', [
       'model11' => $model11,
       'searchModel' => $searchModel,
       'dataProvider' => $dataProvider,
+      'showAlertBlock'=>$alertBlock,
     ]);
 
     // $searchModel = new Tr11ordAlqSearch();
@@ -103,10 +111,10 @@ class Tr12detalqController extends Controller
 
     /*Yii::$app->getSession()->setFlash('success',
     '<span class="glyphicon glyphicon-ok-sign"></span> <strong>'.Yii::t('app','Guardado').'!</strong>');*/
-    return $this->render('index', [
-      'searchModel' => $searchModel,
-      'dataProvider' => $dataProvider,
-    ]);
+    // return $this->render('index', [
+    //   'searchModel' => $searchModel,
+    //   'dataProvider' => $dataProvider,
+    // ]);
   }
 
   /**
@@ -132,15 +140,15 @@ class Tr12detalqController extends Controller
         $articulo = Tr12detalq::findOne(['ido_11in'=>$orden['ido_11in'],'chr_10in'=>$model12->chr_10in]);
         /*si la herramienta ya esta en el carrito*/
         if($articulo){
-  /**********************************************************************************************************************************************/
-  /**************************************ariculo ya esta en carrito*********************************************************************************/
-  /**********************************************************************************************************************************************/
+          /**********************************************************************************************************************************************/
+          /**************************************ariculo ya esta en carrito*********************************************************************************/
+          /**********************************************************************************************************************************************/
           /*sumamos la cantidad actual con la ingresada
           $model12 es el que viene del formulario*/
           $articulo->can_12in = $articulo->can_12in+ $model12->can_12in;
           /*se vuelve a calcular el monto total
           monto total es = el mismo + la cantidad total de herramientas en este articulo
-           * el precio que ya tiene la herramienta*/
+          * el precio que ya tiene la herramienta*/
           $articulo->mto_12de += $model12->can_12in * $articulo->pre_12de;
           if($articulo->save()){
             /*si guardamos el articulo, entonces actualizamos el monto total de la orden
@@ -168,9 +176,9 @@ class Tr12detalqController extends Controller
             return $this->redirect(['index']);
           }
         } /* fin   if($articulo)*/
-  /**********************************************************************************************************************************************/
-  /***********************articulo no esta en carrito, agregar*********************************************************************************/
-  /**********************************************************************************************************************************************/
+        /**********************************************************************************************************************************************/
+        /***********************articulo no esta en carrito, agregar*********************************************************************************/
+        /**********************************************************************************************************************************************/
         /*$model12 viene del formulario
         se ingresa el id orden en model de tbl 12, la orden es la que
         ya esta ingresada, por eso se usa  $orden*/
@@ -208,9 +216,9 @@ class Tr12detalqController extends Controller
           return $this->redirect(['index']);
         }
       } /* fin if ($orden)*/
-/**********************************************************************************************************************************************/
-/**********************************************************************************************************************************************/
-/******************fin if orden existe, inicio creacion nueva orden************************************************************/
+      /**********************************************************************************************************************************************/
+      /**********************************************************************************************************************************************/
+      /******************fin if orden existe, inicio creacion nueva orden************************************************************/
 
       /* si se llega a este punto es que el cliente no tiene ninguna orden activa, por lo tanto se procede a crear*/
       /*$model11 y $model12 vienen del formulario.
@@ -384,9 +392,9 @@ class Tr12detalqController extends Controller
       $articulo = Tr12detalq::findOne(['ido_11in'=>$idOrden,'chr_10in'=>$codigoHerramienta]);
       /*si la herramienta ya esta en el carrito*/
       if($articulo){
-/**********************************************************************************************************************************************/
-/**************************************ariculo ya esta en carrito*********************************************************************************/
-/**********************************************************************************************************************************************/
+        /**********************************************************************************************************************************************/
+        /**************************************ariculo ya esta en carrito*********************************************************************************/
+        /**********************************************************************************************************************************************/
         /*sumamos la cantidad actual con la ingresada*/
         $articulo->can_12in = $articulo->can_12in+ $cantidad;
         /*se vuelve a calcular el monto total
@@ -421,9 +429,9 @@ class Tr12detalqController extends Controller
           exit();
         }
       } /* fin if($articulo)*/
-/**********************************************************************************************************************************************/
-/***********************articulo no esta en carrito, agregar*********************************************************************************/
-/**********************************************************************************************************************************************/
+      /**********************************************************************************************************************************************/
+      /***********************articulo no esta en carrito, agregar*********************************************************************************/
+      /**********************************************************************************************************************************************/
       /* se crea un nuevo detalle*/
       $model12 = new Tr12detalq();
       /*se ingresa el id orden en model de tbl 12*/
@@ -473,6 +481,313 @@ class Tr12detalqController extends Controller
     // }
   } /* fin actionAgregarArticulo*/
 
+  public function actionSolicitarEntregarOrden($idOrden,$fechaDevolucion){
+    $model11 = Tr11ordAlq::findOne((int)$idOrden);
+    /*si no existe el modelo, manda error*/
+    if($model11 === null){
+      throw new NotFoundHttpException(Yii::t('app', 'Recurso no encontrado.'));
+      /*solo se puede solicitar si esta Activo*/
+    }elseif ($model11->est_11in != 1) {
+      Yii::$app->getSession()->setFlash('error',
+      '<span class="glyphicon glyphicon-bullhorn"></span> <strong>'.
+      Yii::t('app','Este Orden no se puede solicitar ni entregar').'!</strong>');
+      return $this->redirect(['view','id'=>$idOrden]);
+    }
+    $mensajes = [];
+    $mensajes[]= '<span class="glyphicon glyphicon-bullhorn"></span> <strong>Recuerde que ninguna herramienta esta reservada hasta que la orden este solicitada</strong>';
+    /*valida las cantidades de los articulos que se pretenden alquilar*/
+    /*obtenemos todos los articulos de la orden*/
+    /*si se pone find(['ido_11in'=>10])->all(); devolvera todos los registros, por eso se usa el where*/
+    $articulos = Tr12detalq::find()->where(['ido_11in'=>$idOrden])->all();
+
+    /*se recorre cada articulo*/
+    foreach ($articulos as $articulo) {
+      /*obtenemos la herramienta a alquilar*/
+      $herramienta = Tr10her::findOne(['chr_10in'=>$articulo['chr_10in']]);
+      /*si la cantidad de herramientas en inventario es menor que la cantidad a descontar,
+      entonces no se puede alquilar*/
+      if($herramienta['can_10in'] < $articulo['can_12in']){
+        /*obtenemos el nombre y la marca de la herramienta para mostrar un mensaje mas detallado*/
+        $nombre = Tr08nhr::findOne($herramienta['idn_08in']);
+        $marca = Tr09mar::findOne($herramienta['cgm_09in']);
+        $mensajes[]=  'Cantidad insuficiente de '.$nombre['nom_08vc'].
+        '(s) '.$marca['nom_09vc'].' con <strong>codigo de herramienta: </strong>'.$herramienta['chr_10in'].
+        '. <br />Cantidad en inventario: '.$herramienta['can_10in'].'.';
+      }
+    }
+    /*si hay mas de un mensajer, se muestran los errores.
+    tiene que ser mayor que 1, porque el primer mensaje es agregado al crear el array*/
+    if (sizeof($mensajes) > 1) {
+      Yii::$app->getSession()->setFlash('error',$mensajes);
+      return $this->redirect(['view','id'=>$idOrden,'alertBlock'=>false]);
+    }
+    /*si hay insuficiente cantidad de caa articulo en inventario hace la transaccion*/
+    $tran = Yii::$app->db->beginTransaction();
+    try {
+      /*si todo esta bien, se ingresan los datos necesarios*/
+      $model11->est_11in = 3; /*retirado*/
+      $model11->fso_11dt = Date('Y/m/d H:i:s');
+      $model11->fre_11dt = Date('Y/m/d H:i:s');
+      $model11->fde_11dt  = Date('Y/m/d H:i:s', strtotime($fechaDevolucion));
+      $model11->nus_ent_02in = Yii::$app->user->identity->nus_02in;
+      if ($model11->save(false)) {
+        /*se recorre cada articulo*/
+        foreach ($articulos as $articulo) {
+          /*obtenemos la herramienta a alquilar*/
+          $herramienta = Tr10her::findOne(['chr_10in'=>$articulo['chr_10in']]);
+          /*descontamos la cantidad de cada articulo del inventario*/
+          $herramienta->can_10in -= $articulo->can_12in;
+          $herramienta->save(false);
+        }
+        Yii::$app->getSession()->setFlash('success',
+        '<span class="glyphicon glyphicon-ok-sign"></span> <strong>'.
+        Yii::t('app','Orden Entregada').'!</strong>');
+        $tran->commit();
+        return $this->redirect(['view','id'=>$idOrden]);
+      }else{
+        Yii::$app->getSession()->setFlash('error',
+        '<span class="glyphicon glyphicon-bullhorn"></span> <strong>'.
+        Yii::t('app','No se pudo Entregar la orden').'!</strong>');
+        $tran->rollBack();
+        return $this->redirect(['view','id'=>$idOrden]);
+      }
+    } catch (\Exception $e) {
+      $tran->rollBack();
+      throw $e;
+    }
+  }/* fin actionSolicitarEntregarOrden*/
+  /***************************************************************************************/
+  /***************************************************************************************/
+  public function actionFinalizarOrden($idOrden){
+
+    $model11 = Tr11ordAlq::findOne((int)$idOrden);
+    if($model11 === null){
+      throw new NotFoundHttpException(Yii::t('app', 'Recurso no encontrado.'));
+      /*solo ordenes retiradas se oueden finalizar*/
+    }elseif ($model11->est_11in != 3) {/*retirado*/
+      Yii::$app->getSession()->setFlash('error',
+      '<span class="glyphicon glyphicon-bullhorn"></span> <strong>'.
+      Yii::t('app','Esta Orden no se puede finalizar').'!</strong>');
+      return $this->redirect(['view','id'=>$idOrden]);
+    }
+    $tran = Yii::$app->db->beginTransaction();
+    try {
+      /*pone estado finalizado*/
+      $model11->est_11in = 5;
+
+      if ($model11->save(false)) {
+        /*de vuelve articulos a inventario*/
+        /*obtenemos todos los articulos de la orden*/
+        /*si se pone find(['ido_11in'=>10])->all(); devolvera todos los registros, por eso se usa el where*/
+        $articulos = Tr12detalq::find()->where(['ido_11in'=>$idOrden])->all();
+        /*se recorre cada articulo*/
+        foreach ($articulos as $articulo) {
+          /*obtenemos la herramienta a alquilar*/
+          $herramienta = Tr10her::findOne(['chr_10in'=>$articulo['chr_10in']]);
+          /*devolvemos la cantidad de cada articulo del inventario*/
+          $herramienta->can_10in += $articulo->can_12in;
+          $herramienta->save(false);
+        }
+        Yii::$app->getSession()->setFlash('success',
+        '<span class="glyphicon glyphicon-ok-sign"></span> <strong>'.
+        Yii::t('app','Orden finalizada').'!</strong>');
+        $tran->commit();
+        return $this->redirect(['view','id'=>$idOrden]);
+      }else{
+        Yii::$app->getSession()->setFlash('error',
+        '<span class="glyphicon glyphicon-bullhorn"></span> <strong>'.
+        Yii::t('app','No se pudo finalizar la orden').'!</strong>');
+        $tran->rollBack();
+        return $this->redirect(['view','id'=>$idOrden]);
+      }
+    } catch (\Exception $e) {
+      $tran->rollBack();
+      throw $e;
+    }
+  } /*fin actionFinalizarOrden*/
+  /***************************************************************************************/
+  /***************************************************************************************/
+  public function actionSolicitarOrden($idOrden){
+    $model11 = Tr11ordAlq::findOne((int)$idOrden);
+    if($model11 === null){
+      throw new NotFoundHttpException(Yii::t('app', 'Recurso no encontrado.'));
+      /*solo ordenes activas se pueden solicitar*/
+    }elseif ($model11->est_11in != 1) {/*activo*/
+      Yii::$app->getSession()->setFlash('error',
+      '<span class="glyphicon glyphicon-bullhorn"></span> <strong>'.
+      Yii::t('app','Esta Orden no se puede solicitar').'!</strong>');
+      return $this->redirect(['view','id'=>$idOrden]);
+    }
+    $mensajes = [];
+    $mensajes[]= '<span class="glyphicon glyphicon-bullhorn"></span> <strong>Recuerde que ninguna herramienta esta reservada hasta que la orden este solicitada</strong>';
+    /*valida las cantidades de los articulos que se pretenden alquilar*/
+    /*obtenemos todos los articulos de la orden*/
+    /*si se pone find(['ido_11in'=>10])->all(); devolvera todos los registros, por eso se usa el where*/
+    $articulos = Tr12detalq::find()->where(['ido_11in'=>$idOrden])->all();
+
+    /*se recorre cada articulo*/
+    foreach ($articulos as $articulo) {
+      /*obtenemos la herramienta a alquilar*/
+      $herramienta = Tr10her::findOne(['chr_10in'=>$articulo['chr_10in']]);
+      /*si la cantidad de herramientas en inventario es menor que la cantidad a descontar,
+      entonces no se puede alquilar*/
+      if($herramienta['can_10in'] < $articulo['can_12in']){
+        /*obtenemos el nombre y la marca de la herramienta para mostrar un mensaje mas detallado*/
+        $nombre = Tr08nhr::findOne($herramienta['idn_08in']);
+        $marca = Tr09mar::findOne($herramienta['cgm_09in']);
+        $mensajes[]=  'Cantidad insuficiente de '.$nombre['nom_08vc'].
+        '(s) '.$marca['nom_09vc'].' con <strong>codigo de herramienta: </strong>'.$herramienta['chr_10in'].
+        '. <br />Cantidad en inventario: '.$herramienta['can_10in'].'.';
+      }
+    }
+    /*si hay mas de un mensajer, se muestran los errores.
+    tiene que ser mayor que 1, porque el primer mensaje es agregado al crear el array*/
+    if (sizeof($mensajes) > 1) {
+      Yii::$app->getSession()->setFlash('error',$mensajes);
+      return $this->redirect(['view','id'=>$idOrden,'alertBlock'=>false]);
+    }
+    $tran = Yii::$app->db->beginTransaction();
+    try {
+      /*pone estado finalizado*/
+      $model11->est_11in = 2;
+      $model11->fso_11dt = Date('Y/m/d H:i:s');
+      if ($model11->save(false)) {
+        /*obtenemos todos los articulos de la orden*/
+        /*se recorre cada articulo*/
+        foreach ($articulos as $articulo) {
+          /*obtenemos la herramienta a alquilar*/
+          $herramienta = Tr10her::findOne(['chr_10in'=>$articulo['chr_10in']]);
+          /*devolvemos la cantidad de cada articulo del inventario*/
+          $herramienta->can_10in -= $articulo->can_12in;
+          $herramienta->save(false);
+        }
+        Yii::$app->getSession()->setFlash('success',
+        '<span class="glyphicon glyphicon-ok-sign"></span> <strong>'.
+        Yii::t('app','Alquiler solicitado').'!</strong>');
+        $tran->commit();
+        return $this->redirect(['view','id'=>$idOrden]);
+      }else{
+        Yii::$app->getSession()->setFlash('error',
+        '<span class="glyphicon glyphicon-bullhorn"></span> <strong>'.
+        Yii::t('app','No se pudo solicitar este alquiler').'!</strong>');
+        $tran->rollBack();
+        return $this->redirect(['view','id'=>$idOrden]);
+      }
+    } catch (\Exception $e) {
+      $tran->rollBack();
+      throw $e;
+    }
+  } /* fin actionSolicitarOrden*/
+  /***************************************************************************************/
+  /***************************************************************************************/
+  public function actionDescartarOrden($idOrden){
+    $model11 = Tr11ordAlq::findOne((int)$idOrden);
+    if($model11 === null){
+      throw new NotFoundHttpException(Yii::t('app', 'Recurso no encontrado.'));
+      /*solo descartar ordenes solicitadas*/
+    }elseif ($model11->est_11in != 2) {/*solicitado*/
+      Yii::$app->getSession()->setFlash('error',
+      '<span class="glyphicon glyphicon-bullhorn"></span> <strong>'.
+      Yii::t('app','Esta Orden no se puede solicitar').'!</strong>');
+      return $this->redirect(['view','id'=>$idOrden]);
+    }
+    $tran = Yii::$app->db->beginTransaction();
+    try {
+      /*pone activo finalizado*/
+      $model11->est_11in = 1;
+      $model11->fso_11dt = null;
+      if ($model11->save(false)) {
+        /*se devuelven articulos a inventario
+        obtenemos todos los articulos de la orden*/
+        /*si se pone find(['ido_11in'=>10])->all(); devolvera todos los registros, por eso se usa el where*/
+        $articulos = Tr12detalq::find()->where(['ido_11in'=>$idOrden])->all();
+        /*se recorre cada articulo*/
+        foreach ($articulos as $articulo) {
+          /*obtenemos la herramienta a alquilar*/
+          $herramienta = Tr10her::findOne(['chr_10in'=>$articulo['chr_10in']]);
+          /*devolvemos la cantidad de cada articulo del inventario*/
+          $herramienta->can_10in += $articulo->can_12in;
+          $herramienta->save(false);
+        }
+        Yii::$app->getSession()->setFlash('success',
+        '<span class="glyphicon glyphicon-ok-sign"></span> <strong>'.
+        Yii::t('app','Alquiler descartado').'!</strong>');
+        $tran->commit();
+        return $this->redirect(['view','id'=>$idOrden]);
+      }else{
+        Yii::$app->getSession()->setFlash('error',
+        '<span class="glyphicon glyphicon-bullhorn"></span> <strong>'.
+        Yii::t('app','No se pudo descartado este alquiler').'!</strong>');
+        $tran->rollBack();
+        return $this->redirect(['view','id'=>$idOrden]);
+      }
+    } catch (\Exception $e) {
+      $tran->rollBack();
+      throw $e;
+    }
+  } /* fin actionDescartarOrden*/
+/***************************************************************************************/
+/***************************************************************************************/
+  public function actionEntregarOrden($idOrden,$fechaDevolucion){
+    $model11 = Tr11ordAlq::findOne((int)$idOrden);
+    /*si no existe el modelo, manda error*/
+    if($model11 === null){
+      throw new NotFoundHttpException(Yii::t('app', 'Recurso no encontrado.'));
+      /*solo se puede entregar si esta solicitado*/
+    }elseif ($model11->est_11in != 2) {
+      Yii::$app->getSession()->setFlash('error',
+      '<span class="glyphicon glyphicon-bullhorn"></span> <strong>'.
+      Yii::t('app','Este Orden no se puede entregar').'!</strong>');
+      return $this->redirect(['view','id'=>$idOrden]);
+    }
+    $tran = Yii::$app->db->beginTransaction();
+    try {
+      /*si todo esta bien, se ingresan los datos necesarios*/
+      $model11->est_11in = 3; /*retirado*/
+      // $model11->fso_11dt = Date('Y/m/d H:i:s');
+      $model11->fre_11dt = Date('Y/m/d H:i:s');
+      $model11->fde_11dt  = Date('Y/m/d H:i:s', strtotime($fechaDevolucion));
+      $model11->nus_ent_02in = Yii::$app->user->identity->nus_02in;
+      if ($model11->save(false)) {
+        Yii::$app->getSession()->setFlash('success',
+        '<span class="glyphicon glyphicon-ok-sign"></span> <strong>'.
+        Yii::t('app','Orden Entregada').'!</strong>');
+        $tran->commit();
+        return $this->redirect(['view','id'=>$idOrden]);
+      }else{
+        Yii::$app->getSession()->setFlash('error',
+        '<span class="glyphicon glyphicon-bullhorn"></span> <strong>'.
+        Yii::t('app','No se pudo Entregar la orden').'!</strong>');
+        $tran->rollBack();
+        return $this->redirect(['view','id'=>$idOrden]);
+      }
+    } catch (\Exception $e) {
+      $tran->rollBack();
+      throw $e;
+    }
+  }/* fin actionEntregarOrden*/
+  /***************************************************************************************/
+  /***************************************************************************************/
+  public function actionTran(){
+    $mar = new Tr09mar();
+    $model = new Tr11ordAlq;
+    $tran = Yii::$app->db->beginTransaction();
+    try {
+      $mar->nom_09vc="prueba tran";
+      $mar->est_09in="0";
+      /*se debe poner save(false) porque la clase ActiveRecord maneja los errores
+      independiende y si algo da error no va a caer en el catch*/
+      $mar->save(false);
+
+      $model->ncl_06in=33;
+      $model->est_11in=0;
+      $model->save(false);
+      $tran->commit();
+    } catch (\Exception $e) {
+      $tran->rollBack();
+      throw $e;
+    }
+  }
 
 
 
