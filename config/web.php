@@ -6,6 +6,7 @@ $db = require __DIR__ . '/db.php';
 $config = [
   'language'=>'es',
   'id' => 'basic',
+  'name'=>'ToRent',
   'basePath' => dirname(__DIR__),
   'bootstrap' => ['log'],
   'aliases' => [

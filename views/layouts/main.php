@@ -35,21 +35,26 @@ AppAsset::register($this);
         'class' => 'navbar-inverse navbar-fixed-top',
       ],
     ]);
-    if (Yii::$app->user->isGuest) {
+    /*ni usuario o cliente a iniciado sesion*/
+    if (Yii::$app->user->isGuest && Yii::$app->userCliente->isGuest) {
       echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => [
           ['label' => Yii::t('app','Inicio'), 'url' => ['/site/index']],
           Yii::$app->user->isGuest?(
-            ['label' => 'Login', 'url' => ['/site/login']]
-            ):('')
+            ['label' => 'Cliente', 'url' => ['/site/login-cliente']]
+            ):(''),
+            Yii::$app->user->isGuest?(
+              ['label' => 'Usuario', 'url' => ['/site/login']]
+              ):('')
           ],
         ]);
-      }else{
+        /*el usuario inicio sesion y se valida que legitimamente sea un usuario de la empresa*/
+      }elseif(!Yii::$app->user->isGuest && isset(Yii::$app->user->identity->nus_02in)){
         echo Nav::widget([
           'options' => ['class' => 'navbar-nav navbar-right'],
           'items' => [
-            ['label' => 'Home', 'url' => ['/site/index']],
+            ['label' => 'Inicio', 'url' => ['/site/index']],
             // ['label' => 'About', 'url' => ['/site/about']],
             // ['label' => 'Contact', 'url' => ['/site/contact']],
             ['label' => 'Usuario', 'url' => ['tr02usu/index']],
@@ -61,13 +66,29 @@ AppAsset::register($this);
                 '<li>'
                 . Html::beginForm(['/site/logout'], 'post')
                 . Html::submitButton(
-                  'Logout (' . Yii::$app->user->identity->nom_02vc . ')',
+                  'Salir (' . Yii::$app->user->identity->nom_02vc . ')',
                   ['class' => 'btn btn-link logout']
                   )
                   . Html::endForm()
                   . '</li>'
                 ],
               ]);
+            }elseif(!Yii::$app->userCliente->isGuest && isset(Yii::$app->userCliente->identity->ncl_06in)){
+              echo Nav::widget([
+                'options' => ['class' => 'navbar-nav navbar-right'],
+                'items' => [
+                  ['label' => 'Inicio', 'url' => ['/site/index']],
+                  ['label' => 'Catálogo', 'url' => ['/site/catalogo']],
+                      '<li>'
+                      . Html::beginForm(['/site/logout-cliente'], 'post')
+                      . Html::submitButton(
+                        'Salir (' . Yii::$app->userCliente->identity->nom_06vc . ')',
+                        ['class' => 'btn btn-link logout']
+                        )
+                        . Html::endForm()
+                        . '</li>'
+                      ],
+                    ]);
             }
             NavBar::end();
 
@@ -84,7 +105,7 @@ AppAsset::register($this);
 
             <footer class="footer">
               <div class="container">
-                <p class="pull-left">&copy; My Company <?= date('Y') ?></p>
+                <p class="pull-left">&copy; ToRent <?= date('Y') ?></p>
 
                 <p class="pull-right"><?= Yii::powered() ?></p>
               </div>

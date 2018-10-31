@@ -55,11 +55,8 @@ class LoginFormCliente extends Model
     {
         if (!$this->hasErrors()) {
             $user = $this->getUser();
-
-            if (!$user) {
+            if (!$user || !$user->validatePassword($this->password)) {
                 $this->addError($attribute, 'Usuario o contraseña incorrectos (clientes).');
-            }elseif (!$user->validatePassword($this->password)) {
-                $this->addError($attribute, 'pinche usuario'.$user['ncl_06in']);
             }
         }
     }

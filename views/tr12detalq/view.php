@@ -12,9 +12,10 @@ use kartik\alert\AlertBlock;
 use \nterms\pagesize\PageSize;
 use kartik\date\DatePicker;
 
-use app\models\Tr10her;
-use app\models\Tr09mar;
+use app\models\Tr06cli;
 use app\models\Tr08nhr;
+use app\models\Tr09mar;
+use app\models\Tr10her;
 use app\models\Tr12detalq;
 
 /* @var $this yii\web\View */
@@ -60,7 +61,17 @@ $model12 = new Tr12detalq();
           'model' => $model11,
           'attributes' => [
             // 'ido_11in',
-            'ncl_06in',
+            [
+            'attribute'=>'ncl_06in',
+            'value'=>function($model11){
+            	$cliente = Tr06cli::findOne(['ncl_06in'=>$model11->ncl_06in]);
+            	if (@$cliente) {
+            		return $cliente->nom_06vc.' '.$cliente->ap1_06vc.' '.$cliente->ap2_06vc;
+            	}else{
+            	    return "ni llopa";
+            	}
+            }
+            ],
             'fcr_11dt',
             'fso_11dt',
             'fre_11dt',
@@ -243,7 +254,17 @@ $model12 = new Tr12detalq();
 
               'idd_12in',
               'ido_11in',
-              'chr_10in',
+              [
+              'attribute'=>'chr_10in',
+              'value'=>function($model){
+              	$herramienta = Tr10her::findOne(['chr_10in'=>$model->chr_10in]);
+              	if(@$herramienta){
+              		$nombre = Tr08nhr::findOne(['idn_08in'=>$herramienta->idn_08in]);
+              		$marca = Tr09mar::findOne(['cgm_09in'=>$herramienta->cgm_09in]);
+              		return $model->chr_10in.' - '.$nombre->nom_08vc.' ('.$marca->nom_09vc.')';
+              	}
+              }
+              ],
               'can_12in',
               [
                 'attribute'=>'pre_12de',

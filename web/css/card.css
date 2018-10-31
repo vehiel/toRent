@@ -1,21 +1,38 @@
 body{
   background: #F8F8FF;
 }
-
+.nombre_herramienta{
+  font-size: 25px;
+  /* font-family: "Times New Roman", Times, serif; */
+}
+.catalogo_title{
+  font-size: 50px;
+  font-family: "Times New Roman", Times, serif;
+}
+img {
+  /* border: solid 1px;
+  border-color: red; */
+  margin-top: 20px;
+  height: 50%;
+  max-width: 280px;
+}
 .contenedor{
   display: flex;
   flex-direction: row;
   flex-flow: row wrap;
-  justify-content: space-around;
+  justify-content: center;
   width: 100%;
 }
+
 .card {
   background: #FFF;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
   max-width: 300px;
+  max-height: 600px;
   /* text-align: center; */
   font-family: arial;
   margin-bottom: 20px;
+  margin-right: 30px;
 }
 
 .price {
@@ -34,7 +51,21 @@ body{
   width: 100%;
   font-size: 18px;
 }
+.card a {
+  border: none;
+  outline: 0;
+  padding: 12px;
+  color: white;
+  background-color: #000;
+  text-align: center;
+  cursor: pointer;
+  width: 100%;
+  font-size: 18px;
+}
 
 .card button:hover {
+  opacity: 0.7;
+}
+.card a:hover {
   opacity: 0.7;
 }

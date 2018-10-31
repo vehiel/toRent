@@ -9,6 +9,9 @@ use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\LoginFormCliente;
 use app\models\ContactForm;
+use app\models\Tr08nhr;
+use app\models\Tr10her;
+
 date_default_timezone_set(Yii::$app->params['zonaHorario']);
 
 class SiteController extends Controller
@@ -107,13 +110,13 @@ class SiteController extends Controller
 
   public function actionLoginCliente()
   {
-    if (!Yii::$app->user->isGuest) {
+    if (!Yii::$app->userCliente->isGuest) {
       return $this->goHome();
     }
 
     $model = new LoginFormCliente();
     if ($model->load(Yii::$app->request->post()) && $model->login()) {
-      return $this->render('cliente');
+      return $this->goBack();
     }
 
     $model->password = '';
@@ -129,6 +132,12 @@ class SiteController extends Controller
   public function actionLogout()
   {
     Yii::$app->user->logout();
+
+    return $this->goHome();
+  }
+  public function actionLogoutCliente()
+  {
+    Yii::$app->userCliente->logout();
 
     return $this->goHome();
   }
@@ -162,6 +171,50 @@ class SiteController extends Controller
   }
 
   public function actionCatalogo(){
-    return $this->render('cliente');
+    $var = Tr08nhr::find()->select(
+      [
+        'tr08nhr.idn_08in',
+        'tr08nhr.ima_08vc',
+        'nom_08vc',
+        'h.pre_10de',
+        // 'h.ima_10vc'
+      ]
+      )->innerJoin(['h'=>'tr10her'],'tr08nhr.idn_08in = h.idn_08in')->asArray()->all();
+    return $this->render('catalogo',['var'=>$var]);
+  }
+
+  public function actionHerramienta($id){
+    // $var = Tr08nhr::find()->select(
+    //   [
+    //     'h.idn_08in',
+    //     // 'tr08nhr.ima_08vc',
+    //     'nom_08vc',
+    //     'm.nom_09vc',
+    //     'h.cgm_09in',
+    //     'h.pre_10de',
+    //     'h.ima_10vc',
+    //     'h.chr_10in'
+    //   ]
+    //   )
+    //   ->innerJoin(['h'=>'tr10her'],'tr08nhr.idn_08in = h.idn_08in')
+    //   ->innerJoin(['m'=>'tr09mar'],'m.cgm_09in = h.cgm_09in')
+    //   ->andWhere(['h.idn_08in'=>$id])->groupBy('chr_10in')
+    //   ->asArray()->all();
+    $var = Tr10her::find()->select(
+      [
+            'tr10her.cgm_09in',
+            'tr10her.pre_10de',
+            'tr10her.ima_10vc',
+            'tr10her.chr_10in',
+            'tr10her.idn_08in',
+            'tr08nhr.nom_08vc',
+            'tr09mar.nom_09vc',
+      ]
+      )->innerJoin('tr08nhr','tr08nhr.idn_08in = tr10her.idn_08in')
+      ->innerJoin('tr09mar','tr09mar.cgm_09in = tr10her.cgm_09in')
+      ->where(['tr08nhr.idn_08in'=>$id])->asArray()->all();
+      // var_dump($var);
+      $nombre = Tr08nhr::findOne(['idn_08in'=>$id]);
+    return $this->render('herramienta',['var'=>$var,'titulo'=>$nombre['nom_08vc']]);
   }
 }
