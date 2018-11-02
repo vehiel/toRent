@@ -74,7 +74,10 @@ AlertBlock::widget([
             ?>
         <?php// endforeach; ?>
 <div class="tr12detalq-index">
-
+  <div class="alert alert-danger">
+    <h4>Recuerde que las ordenes solicitadas tienen articulos <strong>bloqueados</strong>,
+    se recomienda descartarlas para que los articulos esten disponibles.</h4>
+  </div>
   <h1><?= Html::encode($this->title) ?></h1>
   <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 

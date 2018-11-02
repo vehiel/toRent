@@ -106,12 +106,13 @@ use kartik\file\FileInput;
             ]);
           }
           ?>
-        </div>
-
-
-        <div class="form-group col-lg-12 col-md-12">
           <?= Html::submitButton(Yii::t('app', 'Guardar'), ['class' => 'btn btn-success']) ?>
         </div>
+
+
+        <!-- <div class="form-group col-lg-12 col-md-12">
+
+        </div> -->
       </div>
       <?php ActiveForm::end(); ?>
 

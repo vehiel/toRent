@@ -11,6 +11,7 @@ use yii\helpers\ArrayHelper;
 use kartik\alert\AlertBlock;
 use \nterms\pagesize\PageSize;
 use kartik\date\DatePicker;
+use yii\helpers\Url;
 
 use app\models\Tr06cli;
 use app\models\Tr08nhr;
@@ -62,15 +63,15 @@ $model12 = new Tr12detalq();
           'attributes' => [
             // 'ido_11in',
             [
-            'attribute'=>'ncl_06in',
-            'value'=>function($model11){
-            	$cliente = Tr06cli::findOne(['ncl_06in'=>$model11->ncl_06in]);
-            	if (@$cliente) {
-            		return $cliente->nom_06vc.' '.$cliente->ap1_06vc.' '.$cliente->ap2_06vc;
-            	}else{
-            	    return "ni llopa";
-            	}
-            }
+              'attribute'=>'ncl_06in',
+              'value'=>function($model11){
+                $cliente = Tr06cli::findOne(['ncl_06in'=>$model11->ncl_06in]);
+                if (@$cliente) {
+                  return $cliente->nom_06vc.' '.$cliente->ap1_06vc.' '.$cliente->ap2_06vc;
+                }else{
+                  return "ni llopa";
+                }
+              }
             ],
             'fcr_11dt',
             'fso_11dt',
@@ -147,7 +148,7 @@ $model12 = new Tr12detalq();
             }?>
             <?php
             if($model11->est_11in === 3){
-              echo Html::a(Yii::t('app', 'Finaliar Alquiler'), ['finalizar-orden', 'idOrden' => $model11->ido_11in], [
+              echo Html::a(Yii::t('app', 'Finalizar Alquiler'), ['finalizar-orden', 'idOrden' => $model11->ido_11in], [
                 'class' => 'btn btn-primary',
                 'data' => [
                   'confirm' => Yii::t('app', 'Esta seguro desea finalizar este alquiler?'),
@@ -255,15 +256,15 @@ $model12 = new Tr12detalq();
               'idd_12in',
               'ido_11in',
               [
-              'attribute'=>'chr_10in',
-              'value'=>function($model){
-              	$herramienta = Tr10her::findOne(['chr_10in'=>$model->chr_10in]);
-              	if(@$herramienta){
-              		$nombre = Tr08nhr::findOne(['idn_08in'=>$herramienta->idn_08in]);
-              		$marca = Tr09mar::findOne(['cgm_09in'=>$herramienta->cgm_09in]);
-              		return $model->chr_10in.' - '.$nombre->nom_08vc.' ('.$marca->nom_09vc.')';
-              	}
-              }
+                'attribute'=>'chr_10in',
+                'value'=>function($model){
+                  $herramienta = Tr10her::findOne(['chr_10in'=>$model->chr_10in]);
+                  if(@$herramienta){
+                    $nombre = Tr08nhr::findOne(['idn_08in'=>$herramienta->idn_08in]);
+                    $marca = Tr09mar::findOne(['cgm_09in'=>$herramienta->cgm_09in]);
+                    return $model->chr_10in.' - '.$nombre->nom_08vc.' ('.$marca->nom_09vc.')';
+                  }
+                }
               ],
               'can_12in',
               [
@@ -282,10 +283,34 @@ $model12 = new Tr12detalq();
               [
                 'class' => 'yii\grid\ActionColumn',
                 'template' => '{update} {delete} ',
+                'buttons'=>[
+                  'update'=> function($url,$model){
+                    $url_ = Url::to(['update-articulo','id'=>$model->idd_12in]);
+                    return Html::a('<span class="glyphicon glyphicon-pencil"></span>',$url_,
+                    [
+                      'title'=> Yii::t('app','Actualizar'),
+                      'class'=>'btnUpdateArticulo',
+                      'value'=>$model->can_12in,
+                    ]);
+                  },
+                  'delete'=> function($url,$model){
+                    $url_ = Url::to(['delete-articulo','id'=>$model->idd_12in]);
+                    return Html::a('<span class="glyphicon glyphicon-trash"></span>',$url_,
+                    [
+                      'title'=> Yii::t('app','Eliminar'),
+                      'class'=>'btnDeleteArticulo',
+                      'data'=>['confirm'=>Yii::t('app','Esta seguro que quiere eliminar este elemento?'),'method'=>'post'],
+                    ]);
+                  },
+                ]
               ],
             ],
           ]); ?>
           <?php Pjax::end();?>
+          <!-- 'data' => [
+              'confirm' => Yii::t('app', 'Are you sure you want to delete this item?'),
+              'method' => 'post',
+          ], -->
         </div> <!-- fin class="col-lg-12 col-md-12" de gridview-->
 
       </div> <!-- fin class="tr12detalq-view row"-->
@@ -347,11 +372,47 @@ $model12 = new Tr12detalq();
       <button type="button" class="btn btn-success" onclick="javascript:entregarOrden('.$model11->ido_11in.');">Entregar</button>
       </div>';
       Modal::end();
+      /**************************/
+      Modal::begin([
+        'options' => [
+          'id'=>'modalUpdateArticulo',
+        ],
+        'size'=>'modal-md',
+      ]);
+      echo '
+      <div class="modal-body">
+      <label for="cantidadArticulo">Cantidad</label>
+      <input class="form-control" id="cantidadArticulo" type="number"/>
+      <input class="form-control" id="actualizarArticuloUrl" type="hidden"/>
+      </div>
+      <div class="modal-footer">
+      <button type="button" class="btn btn-success" onclick="javascript:actulizarCantidadArticulo('.$model11->ido_11in.');">Entregar</button>
+      </div>';
+      Modal::end();
       ?>
       <script src="https://code.jquery.com/jquery-3.3.1.min.js"
       integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
       crossorigin="anonymous"></script>
       <script>
+      /*redirecciona a la ruta de actualizar articulo*/
+      function actulizarCantidadArticulo(idOrden){
+        href = $('#actualizarArticuloUrl').val();
+        cantidad = parseInt($('#cantidadArticulo').val());
+        if (isNaN(cantidad)) {
+          return;
+        }else if(cantidad <= 0){
+          return;
+        }
+        $(location).attr('href',href+'&can='+cantidad+'&idOrden='+idOrden);
+      }
+      /*cuando se hace click en un btn update del GridView muestra el modal update cantidad y agrega la cantidad actual*/
+      $('.btnUpdateArticulo').on('click', function(event){
+          event.preventDefault();
+          cantidad = $(this).attr('value');
+        href = $(this).attr('href');
+          $('#modalUpdateArticulo').modal('show').find('#cantidadArticulo').val(cantidad);
+          $('#modalUpdateArticulo').find('#actualizarArticuloUrl').val(href);
+      });
       function entregarOrden(id){
         var fechaDevolucion = $('#fechaDevolucionEntrega').val();
         if(fechaDevolucion != ""){

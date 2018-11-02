@@ -69,10 +69,11 @@ use kartik\date\DatePicker;
               echo $form->field($model, 'con_02vc')->textInput(['maxlength' => true, 'value'=>'torent2018', 'readonly'=>true]);
             }
             ?>
+            <?= Html::submitButton(Yii::t('app', 'Guardar'), ['class' => 'btn btn-success','style'=>'margin-top:25px;']) ?>
           </div>
-          <div class="form-group col-lg-12 col-md-12">
-            <?= Html::submitButton(Yii::t('app', 'Guardar'), ['class' => 'btn btn-success']) ?>
-          </div>
+          <!-- <div class="form-group col-lg-12 col-md-12">
+
+          </div> -->
         </div>
         <?php ActiveForm::end(); ?>
 

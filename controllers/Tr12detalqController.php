@@ -32,10 +32,10 @@ class Tr12detalqController extends Controller
     return [
       'access'=>[
         'class'=>AccessControl::className(),
-        'only'=>['index','view','update','create','delete'],
+        'only'=>['index','view','update','create','delete','update-articulo'],
         'rules'=>[
           [
-            'actions'=>['view','create','update','delete','index'],
+            'actions'=>['view','create','update','delete','index','update-articulo'],
             'allow'=>true,
             'roles'=>['@'],
 
@@ -65,9 +65,6 @@ class Tr12detalqController extends Controller
     // Yii::$app->getSession()->setFlash('success',
     // '<h4>Recuerde que las ordenes solicitadas tienen articulos bloqueados,
     // se recomienda descartarlas para que los articulos esten disponibles.</h4>');
-    Yii::$app->getSession()->setFlash('error',
-    '<span class="glyphicon glyphicon-bullhorn"></span> <br /><h4>Recuerde que las ordenes solicitadas tienen articulos <strong>bloqueados</strong>,
-    se recomienda descartarlas para que los articulos esten disponibles.</h4>');
     // Yii::$app->getSession()->setFlash('success', [
     //     'type' => 'success',
     //     'icon' => 'fa fa-users',
@@ -373,18 +370,20 @@ class Tr12detalqController extends Controller
 
     // $model11 = new Tr11ordAlq;
     // if ($model12->load(Yii::$app->request->post())) {
-    /*buscamos la orden con id orden, ademas esta orden debe estar con estado 1 o 2 (Activo o Solicitado)*/
+
     // $orden = Tr11ordAlq::find(['ido_11in'=>$idOrden])->andWhere(['IN','est_11in',[1,2]])->one();
     $orden = Tr11ordAlq::findOne(['ido_11in'=>$idOrden]);
-    if ($orden['est_11in'] != 1 && $orden['est_11in'] != 2) {
-      /*no se pueden agregar mas articulos a esta orden*/
-      /*no se pueden agregar mas articulos a esta orden*/
-      $res = ['ok'=>false,'msj'=>'<span class="glyphicon glyphicon-bullhorn"></span> <strong>'.
-      Yii::t('app','No se pueden agregar mas articulos a esta orden').'!</strong>'];
-      echo json_encode($res);
-      exit();
-    }
+
     if ($orden !== null) {
+      /*solo se puede agregar un articulo si la orden esta activa o solicitada*/
+      if ($orden['est_11in'] != 1 && $orden['est_11in'] != 2) {
+        /*no se pueden agregar mas articulos a esta orden*/
+        /*no se pueden agregar mas articulos a esta orden*/
+        $res = ['ok'=>false,'msj'=>'<span class="glyphicon glyphicon-bullhorn"></span> <strong>'.
+        Yii::t('app','No se pueden agregar mas articulos a esta orden').'!</strong>'];
+        echo json_encode($res);
+        exit();
+      }
       /*se busca en la tbl 12 donde el id orden sea == $idOrden, ademas donde el codigo herramienta se igual al seleccionado
       $model12->chr_10in, si se llega a este punto es que la orden esta activa, por lo tanto no se tiene que volver a validar.
       si todo esto se cumple, es que existe una orden activa para el cliente y
@@ -396,7 +395,7 @@ class Tr12detalqController extends Controller
         /**************************************ariculo ya esta en carrito*********************************************************************************/
         /**********************************************************************************************************************************************/
         /*sumamos la cantidad actual con la ingresada*/
-        $articulo->can_12in = $articulo->can_12in+ $cantidad;
+        $articulo->can_12in += $cantidad;
         /*se vuelve a calcular el monto total
         monto total es = a la cantidad total de herramientas en este item * el precio que ya tiene la herramienta*/
         $articulo->mto_12de = $articulo->can_12in * $articulo->pre_12de;
@@ -446,8 +445,8 @@ class Tr12detalqController extends Controller
       if($model12->save()){
         /*si guardamos el articulo, entonces actualizamos el monto total de la orden
         se usa orden porque es el modelo guardado, si se utiliza $model11 creara una nueva orden*/
-        $orden->sto_11de = $orden->sto_11de+$model12->mto_12de;
-        $orden->mto_11de = $orden->mto_11de+$model12->mto_12de;
+        $orden->sto_11de += $model12->mto_12de;
+        $orden->mto_11de += $model12->mto_12de;
         /*actualizamos la orden con los nuevos datos*/
         if($orden->save()){
           /*se pone un mensaje de success y termina el proceso*/
@@ -726,8 +725,8 @@ class Tr12detalqController extends Controller
       throw $e;
     }
   } /* fin actionDescartarOrden*/
-/***************************************************************************************/
-/***************************************************************************************/
+  /***************************************************************************************/
+  /***************************************************************************************/
   public function actionEntregarOrden($idOrden,$fechaDevolucion){
     $model11 = Tr11ordAlq::findOne((int)$idOrden);
     /*si no existe el modelo, manda error*/
@@ -766,6 +765,96 @@ class Tr12detalqController extends Controller
       throw $e;
     }
   }/* fin actionEntregarOrden*/
+
+  /***************************************************************************************/
+  /***************************************************************************************/
+  public function actionDeleteArticulo($id){
+    $model = $this->findModel($id);
+    $orden = Tr11ordAlq::findOne(['ido_11in'=>$model->ido_11in]);
+    /*solo se puede eliminar un articulo si la orden esta activa o solicitada*/
+    if ($orden['est_11in'] != 1 && $orden['est_11in'] != 2) {
+      Yii::$app->getSession()->setFlash('error',
+      '<span class="glyphicon glyphicon-bullhorn"></span> <strong>'.
+      Yii::t('app','No se pueden eliminar articulos de esta orden').'!</strong>');
+      return $this->redirect(['view','id'=>$orden->ido_11in]);
+    }
+
+    $tran = Yii::$app->db->beginTransaction();
+    try{
+    $orden->mto_11de -= $model->mto_12de;
+    if ($orden->save(false)) {
+      if($model->delete(false)){
+        $tran->commit();
+        Yii::$app->getSession()->setFlash('success',
+        '<span class="glyphicon glyphicon-ok-sign"></span> <strong>'.
+        Yii::t('app','Articulo eliminado').'!</strong>');
+        return $this->redirect(['view','id'=>$orden->ido_11in]);
+      }else{
+        $tran->rollBack();
+        Yii::$app->getSession()->setFlash('error',
+        '<span class="glyphicon glyphicon-bullhorn"></span> <strong>'.
+        Yii::t('app','No se pudo eliminar el articulo').'!</strong>');
+        return $this->redirect(['view','id'=>$orden->ido_11in]);
+      }
+    }else{
+      $tran->rollBack();
+    }
+
+  }catch (\Exception $e) {
+      $tran->rollBack();
+      throw $e;
+    }
+  }
+
+  /***************************************************************************************/
+  /***************************************************************************************/
+public function actionUpdateArticulo($id,$can,$idOrden){
+  $can = (int)$can;
+  $articulo = $this->findModel($id);
+  $orden = Tr11ordAlq::findOne(['ido_11in'=>$idOrden]);
+  if($orden === null){
+    Yii::$app->getSession()->setFlash('error',
+    '<span class="glyphicon glyphicon-bullhorn"></span> <strong>'.
+    Yii::t('app','No se encontro la orden').'!</strong>');
+    return $this->redirect(['view','id'=>$idOrden]);
+  }
+  $tran = Yii::$app->db->beginTransaction();
+  try{
+    /*se saca la diferencia entre la cantidad actual y la nueva cantidad del articulo*/
+    $diferencia = $can - $articulo->can_12in;
+    $orden->mto_11de += ($diferencia * $articulo->pre_12de);
+    $orden->sto_11de += ($diferencia * $articulo->pre_12de);
+    if ($orden->save(false)) {
+      $articulo->can_12in = $can;
+      $articulo->mto_12de = $articulo->pre_12de * $can;
+      if ($articulo->save(false)) {
+        $tran->commit();
+        Yii::$app->getSession()->setFlash('success',
+        '<span class="glyphicon glyphicon-ok-sign"></span> <strong>'.
+        Yii::t('app','Cantidad de articulo actualizada').'!</strong>');
+        return $this->redirect(['view','id'=>$idOrden]);
+      }else{
+        $tran->rollBack();
+        Yii::$app->getSession()->setFlash('error',
+        '<span class="glyphicon glyphicon-bullhorn"></span> <strong>'.
+        Yii::t('app','Error al actualizar la cantidad').'!</strong>');
+        return $this->redirect(['view','id'=>$idOrden]);
+      }
+    }else{
+      $tran->rollBack();
+      Yii::$app->getSession()->setFlash('error',
+      '<span class="glyphicon glyphicon-bullhorn"></span> <strong>'.
+      Yii::t('app','Error al actualizar la cantidad').'!</strong>');
+      return $this->redirect(['view','id'=>$idOrden]);
+    }
+
+  }catch(Exception $e){
+    $tran->rollBack();
+    throw $e;
+  }
+  $articulo->can_12in = $can;
+
+}
   /***************************************************************************************/
   /***************************************************************************************/
   public function actionTran(){
