@@ -28,30 +28,30 @@ margin-left: 10%;
 	  <!-- Wrapper for slides -->
 	  <div class="carousel-inner" style="height: 400px;">
 	    <div class="item active">
-	      <img src="../web/uploads/carrusel/i3.jpg" style="width:100%;" alt="Los Angeles">
+	      <img src="<?php echo "http://".$_SERVER['SERVER_NAME'].Yii::getAlias('@web');?>/uploads/carrusel/i3.jpg" style="width:100%;" alt="img1">
 	    </div>
 
 	    <div class="item">
-	      <img src="../web/uploads/carrusel/i4.jpg" style="width:100%;" alt="Chicago">
+	      <img src="<?php echo "http://".$_SERVER['SERVER_NAME'].Yii::getAlias('@web');?>/uploads/carrusel/i4.jpg" style="width:100%;" alt="im2">
 	    </div>
 
 	    <div class="item">
-	      <img src="../web/uploads/carrusel/i5.jpg" style="width:100%;" alt="New York">
+	      <img src="<?php echo "http://".$_SERVER['SERVER_NAME'].Yii::getAlias('@web');?>/uploads/carrusel/i5.jpg" style="width:100%;" alt="im3">
 	    </div>
       <div class="item">
-        <img src="../web/uploads/carrusel/i6.jpg" style="width:100%;" alt="New York">
+        <img src="<?php echo "http://".$_SERVER['SERVER_NAME'].Yii::getAlias('@web');?>/uploads/carrusel/i6.jpg" style="width:100%;" alt="im3">
       </div>
       <div class="item">
-        <img src="../web/uploads/carrusel/i7.jpg" style="width:100%;" alt="New York">
+        <img src="<?php echo "http://".$_SERVER['SERVER_NAME'].Yii::getAlias('@web');?>/uploads/carrusel/i7.jpg" style="width:100%;" alt="im3">
       </div>
 	    <div class="item">
-	      <img src="../web/logo.png" style="width:100%;" alt="New York">
+	      <img src="<?php echo "http://".$_SERVER['SERVER_NAME'].Yii::getAlias('@web');?>/logo.png" style="width:100%;" alt="im3">
 	    </div>
       <div class="item">
-        <img src="../web/uploads/carrusel/i1.png" style="width:100%;" alt="New York">
+        <img src="<?php echo "http://".$_SERVER['SERVER_NAME'].Yii::getAlias('@web');?>/uploads/carrusel/i1.png" style="width:100%;" alt="im3">
       </div>
       <div class="item">
-        <img src="../web/uploads/carrusel/i2.png" style="width:100%;" alt="New York">
+        <img src="<?php echo "http://".$_SERVER['SERVER_NAME'].Yii::getAlias('@web');?>/uploads/carrusel/i2.png" style="width:100%;" alt="im3">
       </div>
 	  </div>
 
@@ -65,8 +65,11 @@ margin-left: 10%;
 	    <span class="sr-only">Siguiente</span>
 	  </a>
 	</div>
-  <hr />
+
+  <?php if (Yii::$app->user->isGuest && Yii::$app->userCliente->isGuest) { ?>
+    <hr />
   <div class="alert alert-success">
     <h4><a href="?r=site/login-cliente">Iniciar sesión</a> para alquilar herramientas :)</h4>
   </div>
+<?php } ?>
 </div>
