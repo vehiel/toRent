@@ -22,7 +22,8 @@ class AppAsset extends AssetBundle
     public $css = [
         'css/site.css',
         'css/growl.css',
-        // 'css/card.css',
+        'css/card.css',
+        'css/about.css'
     ];
     public $js = [
       'js/growl/jquery.growl.js'

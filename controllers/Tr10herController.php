@@ -202,4 +202,18 @@ class Tr10herController extends Controller
 
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
     }
+
+    /*muestra vista de herramienta con datos detallados desde catalogo*/
+    public function actionMasInfo($id){
+      if(Yii::$app->request->isAjax){
+        return $this->renderAjax('masInfo', [
+            'model' => $this->findModel($id),
+        ]);
+      }else{
+        return $this->render('masInfo', [
+            'model' => $this->findModel($id),
+        ]);
+      }
+
+    }
 }

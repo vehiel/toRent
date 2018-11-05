@@ -88,7 +88,6 @@ AlertBlock::widget([
     <h4>Recuerde que las ordenes solicitadas tienen articulos bloqueados, se recomienda descartarlas para que los articulos esten disponibles.</h4>
   </div> -->
   <div align="right">
-    <label><?= Yii::t('app','Mostrando:') ?></label>
     <?php
     /*con esta vara pone la paginacion, pone como defualt 10 items, y las sizes son las diferentes cantidades disponibles a mostrar*/
     echo PageSize::widget(['defaultPageSize'=>10,

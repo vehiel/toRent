@@ -6,11 +6,15 @@ use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\Response;
 use yii\filters\VerbFilter;
+use yii\web\NotFoundHttpException;
+
 use app\models\LoginForm;
 use app\models\LoginFormCliente;
 use app\models\ContactForm;
 use app\models\Tr08nhr;
 use app\models\Tr10her;
+use app\models\Tr11ordAlq;
+use app\models\search\Tr12detalqSearch;
 
 date_default_timezone_set(Yii::$app->params['zonaHorario']);
 
@@ -216,5 +220,27 @@ class SiteController extends Controller
       // var_dump($var);
       $nombre = Tr08nhr::findOne(['idn_08in'=>$id]);
     return $this->render('herramienta',['var'=>$var,'titulo'=>$nombre['nom_08vc']]);
+  }
+
+  public function actionCarrito(){
+    // $model11 = Tr11ordAlq::findOne(['ncl_06in'=>Yii::$app->userCliente->identity->ncl_06in]);
+    $model11 = Tr11ordAlq::findOne(['ncl_06in'=>Yii::$app->userCliente->identity->ncl_06in,'est_11in'=>[1,2]]);
+    /*eliminar*/
+    $alertBlock = true;
+    if ($model11 == null) {
+      Yii::$app->getSession()->setFlash('success',
+      '<span class="glyphicon glyphicon-ok-sign"></span> <strong>'.
+      Yii::t('app','No tiene articulos en el carrito').'!</strong>');
+      return $this->redirect(['catalogo']);
+    }
+
+    $searchModel = new Tr12detalqSearch();
+    $dataProvider = $searchModel->search(Yii::$app->request->queryParams,$model11->ido_11in);
+    return $this->render('carrito', [
+      'model11' => $model11,
+      'searchModel' => $searchModel,
+      'dataProvider' => $dataProvider,
+      'showAlertBlock'=>$alertBlock,
+    ]);
   }
 }

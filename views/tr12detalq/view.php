@@ -73,9 +73,30 @@ $model12 = new Tr12detalq();
                 }
               }
             ],
-            'fcr_11dt',
-            'fso_11dt',
-            'fre_11dt',
+            [
+              'attribute'=>'fcr_11dt',
+              'value'=> function($model){
+                if ($model->fcr_11dt != null) {
+                  return date('d-m-Y H:i:s',strtotime($model->fcr_11dt));
+                }
+              }
+            ],
+            [
+              'attribute'=>'fso_11dt',
+              'value'=> function($model){
+                if ($model->fso_11dt != null) {
+                  return date('d-m-Y H:i:s',strtotime($model->fso_11dt));
+                }
+              }
+            ],
+            [
+              'attribute'=>'fre_11dt',
+              'value'=> function($model){
+                if ($model->fre_11dt != null) {
+                  return date('d-m-Y H:i:s',strtotime($model->fre_11dt));
+                }
+              }
+            ],
           ],
           ]) ?>
         </div>
@@ -83,8 +104,14 @@ $model12 = new Tr12detalq();
           <?= DetailView::widget([
             'model' => $model11,
             'attributes' => [
-              'fde_11dt',
-
+              [
+                'attribute'=>'fde_11dt',
+                'value'=> function($model){
+                  if ($model->fde_11dt != null) {
+                    return date('d-m-Y H:i:s',strtotime($model->fde_11dt));
+                  }
+                }
+              ],
               [
                 'attribute'=>'mto_11de',
                 'value'=>function($model){
@@ -386,7 +413,7 @@ $model12 = new Tr12detalq();
       <input class="form-control" id="actualizarArticuloUrl" type="hidden"/>
       </div>
       <div class="modal-footer">
-      <button type="button" class="btn btn-success" onclick="javascript:actulizarCantidadArticulo('.$model11->ido_11in.');">Entregar</button>
+      <button type="button" class="btn btn-success" onclick="javascript:actulizarCantidadArticulo('.$model11->ido_11in.');">Actualizar</button>
       </div>';
       Modal::end();
       ?>

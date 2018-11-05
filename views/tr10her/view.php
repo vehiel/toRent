@@ -91,9 +91,13 @@ $this->params['breadcrumbs'][] = $this->title;
               }
             ],
             'ser_10vc',
-            'ima_10vc',
+
             'pre_10de',
             'can_10in',
+            // [
+            //   'atrribute'=>'ima_10vc',
+            //   // 'format'=>'raw',
+            // ],
         ],
     ]) ?>
 

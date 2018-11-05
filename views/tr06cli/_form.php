@@ -67,7 +67,11 @@ use kartik\date\DatePicker;
           'allowClear' => true
         ],
         ]) ?>
-        <?= $form->field($model, 'con_06vc')->textInput(['maxlength' => true, 'value'=>'torent2018', 'readonly'=>true]) ?>
+        <?php
+        if($model->isNewRecord) {
+           echo $form->field($model, 'con_06vc')->textInput(['maxlength' => true, 'value'=>'torent2018', 'readonly'=>true]);
+         }
+           ?>
 
       <?= $form->field($model, 'obs_06vc')->textArea(['maxlength' => true]) ?>
         <?= Html::submitButton(Yii::t('app', 'Guardar'), ['class' => 'btn btn-success']) ?>

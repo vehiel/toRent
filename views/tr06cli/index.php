@@ -27,7 +27,6 @@ AlertBlock::widget([
     </p>
     <div align="right">
 
-      <label><?= Yii::t('app','Mostrando:') ?></label>
       <?php
       /*con esta vara pone la paginacion, pone como defualt 10 items, y las sizes son las diferentes cantidades disponibles a mostrar*/
       echo PageSize::widget(['defaultPageSize'=>10,
