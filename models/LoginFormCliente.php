@@ -58,6 +58,10 @@ class LoginFormCliente extends Model
             if (!$user || !$user->validatePassword($this->password)) {
                 $this->addError($attribute, 'Usuario o contraseña incorrectos (clientes).');
             }
+            /*no tiene estado*/
+            // elseif ($user->est_06in == 0) {
+            //     $this->addError($attribute, 'Usuario Inactivo.');
+            // }
         }
     }
 
