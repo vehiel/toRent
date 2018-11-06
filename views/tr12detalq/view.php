@@ -154,15 +154,15 @@ $model12 = new Tr12detalq();
           <div class="col-lg-12 col-md-12" >
             <?php
             if($model11->est_11in === 1){
-              /*************** eliminar ******************************/
-              echo Html::a(Yii::t('app', 'Solicitar (para prueba)'), ['solicitar-orden', 'idOrden' => $model11->ido_11in], [
+              /*************** eliminar -> ******************************/
+              /*echo Html::a(Yii::t('app', 'Solicitar (para prueba)'), ['solicitar-orden', 'idOrden' => $model11->ido_11in], [
                 'class' => 'btn btn-primary',
                 'data' => [
-                  'confirm' => Yii::t('app', 'Esta seguro desea solicitar este alquiler?'),
+                  'confirm' => Yii::t('app', 'Esta seguro que desea solicitar este alquiler?'),
                   'method' => 'post',
                 ],
-              ]);
-              /*************** eliminar ******************************/
+              ]);*/
+              /*************** <- eliminar ******************************/
               echo Html::button(Yii::t('app', 'Solicitar y Entregar'),
               [
                 'class' => 'btn btn-danger',

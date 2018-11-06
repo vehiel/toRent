@@ -146,7 +146,20 @@ $model12 = new Tr12detalq();
           <?php Pjax::end();?>
         </div> <!--- fin class="panel-boy" -->
       </div> <!--- fin class="panel panel-default" -->
+      <div id="divInputAgregarArticulo col-lg-12 col-md-12" >
 
+        <?php /*el esUsuario es para no hacer otro metodo, si es usuario redirecciona a tr12detalq/view y si no redirecciona a site/carrito*/
+        if($model11->est_11in === 1){ /*activo*/
+        echo Html::a(Yii::t('app', 'Solicitar Alquiller'), ['tr12detalq/solicitar-orden', 'idOrden' => $model11->ido_11in,'esUsuario'=>false], [
+            'class' => 'btn btn-success',
+            'data' => [
+              'confirm' => Yii::t('app', 'Esta seguro que desea solicitar este alquiler?'),
+              'method' => 'post',
+            ],
+          ]);
+        }
+          ?>
+      </div>
       <!-- <div class="panel panel-default col-lg-12 col-md-12">
       <div  class="panel-heading"><h4>Artículos</h4></div>
       <div class="panel-body "> -->

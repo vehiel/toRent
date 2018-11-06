@@ -222,11 +222,11 @@ class SiteController extends Controller
     return $this->render('herramienta',['var'=>$var,'titulo'=>$nombre['nom_08vc']]);
   }
 
-  public function actionCarrito(){
+  public function actionCarrito($alertBlock = true){
+    /*si en $alertBlock se pasa a la hora de hacer un render, entonces se usa el valor boolean asignado,
+    si no se pasa sera siempre true*/
     // $model11 = Tr11ordAlq::findOne(['ncl_06in'=>Yii::$app->userCliente->identity->ncl_06in]);
     $model11 = Tr11ordAlq::findOne(['ncl_06in'=>Yii::$app->userCliente->identity->ncl_06in,'est_11in'=>[1,2]]);
-    /*eliminar*/
-    $alertBlock = true;
     if ($model11 == null) {
       Yii::$app->getSession()->setFlash('success',
       '<span class="glyphicon glyphicon-ok-sign"></span> <strong>'.

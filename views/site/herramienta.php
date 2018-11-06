@@ -76,11 +76,15 @@ $this->params['breadcrumbs'][] = $this->title;
         <input id="inputUsuario" type="hidden" value="<?php if(isset(Yii::$app->userCliente->identity->ncl_06in)){echo Yii::$app->userCliente->identity->ncl_06in;} ?>"/>
           <input id="inputHerramienta" type="hidden" value=""/>
           <div class="row">
-            <div class=" col-lg-8 col-md-8 col-sm-8">
+            <!-- <div class="col-lg-12 col-md-12 col-sm-12">
+
+            </div> -->
+            <div class=" col-lg-8 col-md-8 col-sm-8" align="left">
+              <label for="">Cantidad</label>
               <input class="form-control" type="number" id="inputCantidadModal" min="1"/>
             </div>
-            <div class=" col-lg-4 col-md-4 col-sm-4">
-              <button type="button" class="btn btn-primary btnAgregarCarrito" href='?r=tr12detalq/agregar-articulo-catalogo' onclick="agregarCarrito()">
+            <div class=" col-lg-4 col-md-4 col-sm-4" align="left">
+              <button style="margin-top: 25px;" type="button" class="btn btn-primary btnAgregarCarrito" href='?r=tr12detalq/agregar-articulo-catalogo' onclick="agregarCarrito()">
                 <span class="glyphicon glyphicon-shopping-cart"></span> Añadir a Carrito
               </button>
             </div>

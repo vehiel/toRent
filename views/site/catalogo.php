@@ -36,7 +36,8 @@ AlertBlock::widget([
               <img src="../web/uploads/lh/<?php  echo $key['ima_08vc']; ?>" style="width:100%">
             <?php } ?>
             <h3 class="nombre_herramienta"><?php  echo $key['nom_08vc']; ?></h3>
-            <p class="price">₡<?php  echo $key['pre_10de']; ?></p>
+            <!-- <p class="price">₡<?php  echo $key['pre_10de']; ?></p> -->
+            <br />
             <a href="?r=site/herramienta&id=<?php echo $key['idn_08in'] ?>" class="btn btn-primary">Mostrar más</a>
             <!-- <p><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#moreInfo">Mas</button></p> -->
           </div>

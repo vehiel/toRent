@@ -98,7 +98,8 @@ AlertBlock::widget([
                 return number_format($model->pre_10de,2,'.',',');
               }
             ],
-
+            'can_10in',
+            
             ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>

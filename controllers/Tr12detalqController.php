@@ -127,7 +127,7 @@ class Tr12detalqController extends Controller
     if ($model11->load(Yii::$app->request->post()) && $model12->load(Yii::$app->request->post())) {
       /*buscamos la orden con numero de cliente, ademas esta orden debe estar con estado 1 o 2 (Activo o Solicitado)*/
       // $orden = Tr11ordAlq::find(['ido_11in'=>$idOrden])->andWhere(['IN','est_11in',[1,2]])->one();
-      $orden = Tr11ordAlq::find()->where(['ncl_06in'=>$ncl_06in])->andWhere(['IN','est_11in',[1,2]])->one();
+      $orden = Tr11ordAlq::find()->where(['ncl_06in'=>$model11->ncl_06in])->andWhere(['IN','est_11in',[1,2]])->one();
       /*si existe una orden activa para este cliente*/
       if ($orden !== null) {
         /*se busca en la tbl 12 donde el id orden sea == $orden['ido_11in'], ademas donde el codigo herramienta se igual al seleccionado
@@ -605,7 +605,7 @@ class Tr12detalqController extends Controller
   } /*fin actionFinalizarOrden*/
   /***************************************************************************************/
   /***************************************************************************************/
-  public function actionSolicitarOrden($idOrden){
+  public function actionSolicitarOrden($idOrden, $esUsuario = true){
     $model11 = Tr11ordAlq::findOne((int)$idOrden);
     if($model11 === null){
       throw new NotFoundHttpException(Yii::t('app', 'Recurso no encontrado.'));
@@ -614,7 +614,13 @@ class Tr12detalqController extends Controller
       Yii::$app->getSession()->setFlash('error',
       '<span class="glyphicon glyphicon-bullhorn"></span> <strong>'.
       Yii::t('app','Esta Orden no se puede solicitar').'!</strong>');
+      /*si la consulta es del lado de usuario redirecciona a view*/
+      if($esUsuario){
       return $this->redirect(['view','id'=>$idOrden]);
+      /*si no, redirecciona a site/carrito*/
+    }else{
+      return $this->redirect(['site/carrito']);
+    }
     }
     $mensajes = [];
     $mensajes[]= '<span class="glyphicon glyphicon-bullhorn"></span> <strong>Recuerde que ninguna herramienta esta reservada hasta que la orden este solicitada</strong>';
@@ -642,7 +648,14 @@ class Tr12detalqController extends Controller
     tiene que ser mayor que 1, porque el primer mensaje es agregado al crear el array*/
     if (sizeof($mensajes) > 1) {
       Yii::$app->getSession()->setFlash('error',$mensajes);
+      /*si la consulta es del lado de usuario redirecciona a view*/
+      if($esUsuario){
       return $this->redirect(['view','id'=>$idOrden,'alertBlock'=>false]);
+      /*si no, redirecciona a site/carrito*/
+    }else{
+      return $this->redirect(['site/carrito','alertBlock'=>false]);
+    }
+
     }
     $tran = Yii::$app->db->beginTransaction();
     try {
@@ -663,13 +676,25 @@ class Tr12detalqController extends Controller
         '<span class="glyphicon glyphicon-ok-sign"></span> <strong>'.
         Yii::t('app','Alquiler solicitado').'!</strong>');
         $tran->commit();
+        /*si la consulta es del lado de usuario redirecciona a view*/
+        if($esUsuario){
         return $this->redirect(['view','id'=>$idOrden]);
+        /*si no, redirecciona a site/carrito*/
+      }else{
+        return $this->redirect(['site/carrito']);
+      }
       }else{
         Yii::$app->getSession()->setFlash('error',
         '<span class="glyphicon glyphicon-bullhorn"></span> <strong>'.
         Yii::t('app','No se pudo solicitar este alquiler').'!</strong>');
         $tran->rollBack();
+        /*si la consulta es del lado de usuario redirecciona a view*/
+        if($esUsuario){
         return $this->redirect(['view','id'=>$idOrden]);
+        /*si no, redirecciona a site/carrito*/
+      }else{
+        return $this->redirect(['site/carrito']);
+      }
       }
     } catch (\Exception $e) {
       $tran->rollBack();

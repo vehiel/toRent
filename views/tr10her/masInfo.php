@@ -109,7 +109,10 @@ $this->params['breadcrumbs'][] = $this->title;
           // 'ser_10vc',
           // 'ima_10vc',
           'pre_10de',
-          // 'can_10in',
+          [
+            'attribute'=>'can_10in',
+            'label'=>'Cantida en inventario'
+          ],
       ],
   ]) ?>
 
