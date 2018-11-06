@@ -73,11 +73,12 @@ class Tr11ordAlqSearch extends Tr11ordAlq
       'fre_11dt' => $this->fre_11dt,
       'fde_11dt' => $this->fde_11dt,
       'sto_11de' => $this->sto_11de,
-      'mto_11de' => $this->mto_11de,
+      // 'mto_11de' => $this->mto_11de,
       'est_11in' => $this->est_11in,
     ]);
+    $query->andFilterWhere(['like', 'mto_11de',$this->mto_11de])
 
-    $query->orFilterWhere(['like', 'tr06cli.nom_06vc',
+    ->orFilterWhere(['like', 'tr06cli.nom_06vc',
     $this->getAttribute('tr06cli.nom_06vc')])
 
     ->orFilterWhere(['like', 'tr06cli.ap1_06vc',
@@ -88,7 +89,7 @@ class Tr11ordAlqSearch extends Tr11ordAlq
 
     /*vehiel 24/10/2018
     si se tiene un valor y esta separado por un - */
-    if(!empty($this->fso_11dt) && strpos($this->fso_11dt, '-') !== false) {
+    if(!empty($this->fso_11dt) && strpos($this->fso_11dt, ' - ') !== false) {
       /*se hace un explode que es similar a un split y
       obtenemos ambas fechas separadas en variables*/
       list($start_date, $end_date) = explode(' - ', $this->fso_11dt);
@@ -103,7 +104,7 @@ class Tr11ordAlqSearch extends Tr11ordAlq
 
     /*vehiel 24/10/2018
     si se tiene un valor y esta separado por un - */
-    if(!empty($this->fcr_11dt) && strpos($this->fcr_11dt, '-') !== false) {
+    if(!empty($this->fcr_11dt) && strpos($this->fcr_11dt, ' - ') !== false) {
       /*se hace un explode que es similar a un split y
       obtenemos ambas fechas separadas en variables*/
       list($start_date, $end_date) = explode(' - ', $this->fcr_11dt);

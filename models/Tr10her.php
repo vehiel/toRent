@@ -55,6 +55,18 @@ class Tr10her extends \yii\db\ActiveRecord
         ];
     }
 
+    public function attributes()
+    { /*para las consultas compuestas en el index*/
+      //pone nombre de la tabla y nombre de la columna separado por punto, esto exacto a como esta enla DB
+      return array_merge(
+        parent::attributes(),
+        [
+          'tr08nhr.nom_08vc',
+          'tr09mar.nom_09vc',
+        ]
+      );
+    }
+
     /**
      * {@inheritdoc}
      */

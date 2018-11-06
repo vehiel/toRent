@@ -46,7 +46,8 @@ AlertBlock::widget([
             'chr_10in',
 
             [
-              'attribute'=>'idn_08in',
+              'attribute'=>'tr08nhr.nom_08vc',
+              'label'=>Yii::t('app','Nombre herramienta'),
               'value'=> function($model){
                 $nombre = Tr08nhr::findOne($model->idn_08in);
                 if(@$nombre){
@@ -57,7 +58,8 @@ AlertBlock::widget([
               }
             ],
             [
-              'attribute'=>'cgm_09in',
+              'attribute'=>'tr09mar.nom_09vc',
+              'label'=>Yii::t('app','Marca'),
               'value'=> function($model){
                 $marca = Tr09mar::findOne($model->cgm_09in);
                 if(@$marca){
@@ -69,6 +71,8 @@ AlertBlock::widget([
             ],
             [
               'attribute'=>'vol_10in',
+              'filter'=>Html::activeDropDownList($searchModel, 'vol_10in',
+              ['1'=>'110','2'=>'220','3'=>'No Aplica'],['class' => 'form-control','prompt' => 'Todos']),
               'value'=> function($model){
                 if ($model->vol_10in == 1){
                   return "110";
@@ -99,7 +103,7 @@ AlertBlock::widget([
               }
             ],
             'can_10in',
-            
+
             ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>

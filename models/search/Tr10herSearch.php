@@ -18,9 +18,10 @@ class Tr10herSearch extends Tr10her
     public function rules()
     {
         return [
-            [['chr_10in', 'idn_08in', 'cgm_09in', 'vol_10in', 'vut_10in', 'gar_10in', 'tip_10in', 'est_10in', 'alq_10in'], 'integer'],
+            [['chr_10in', 'vol_10in', 'vut_10in', 'gar_10in', 'tip_10in', 'est_10in', 'alq_10in','can_10in'], 'integer'],
             [['des_10vc', 'ser_10vc'], 'safe'],
             ['pre_10de','number'],
+            [['tr08nhr.nom_08vc','tr09mar.nom_09vc'],'safe']
         ];
     }
 
@@ -45,6 +46,18 @@ class Tr10herSearch extends Tr10her
         $query = Tr10her::find();
 
         // add conditions that should always apply here
+        $query->leftJoin(
+          [
+            'tr08nhr'//tabla con la que va a hacer el join
+          ],
+          'tr08nhr.idn_08in = tr10her.idn_08in'
+        );
+        $query->leftJoin(
+          [
+            'tr09mar'//tabla con la que va a hacer el join
+          ],
+          'tr09mar.cgm_09in = tr10her.cgm_09in'
+        );
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -69,11 +82,16 @@ class Tr10herSearch extends Tr10her
             'tip_10in' => $this->tip_10in,
             'est_10in' => $this->est_10in,
             'alq_10in' => $this->alq_10in,
+            'can_10in' => $this->can_10in,
         ]);
 
         $query->andFilterWhere(['like', 'des_10vc', $this->des_10vc])
             ->andFilterWhere(['like', 'ser_10vc', $this->ser_10vc])
-            ->andFilterWhere(['like', 'pre_10de', $this->pre_10de]);
+            ->andFilterWhere(['like', 'pre_10de', $this->pre_10de])
+            ->andFilterWhere(['like', 'tr08nhr.nom_08vc',
+            $this->getAttribute('tr08nhr.nom_08vc')])
+            ->andFilterWhere(['like', 'tr09mar.nom_09vc',
+            $this->getAttribute('tr09mar.nom_09vc')]);
 
         return $dataProvider;
     }
