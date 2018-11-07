@@ -150,7 +150,7 @@ $model12 = new Tr12detalq();
 
         <?php /*el esUsuario es para no hacer otro metodo, si es usuario redirecciona a tr12detalq/view y si no redirecciona a site/carrito*/
         if($model11->est_11in === 1){ /*activo*/
-        echo Html::a(Yii::t('app', 'Solicitar Alquiller'), ['tr12detalq/solicitar-orden', 'idOrden' => $model11->ido_11in,'esUsuario'=>false], [
+        echo Html::a(Yii::t('app', 'Solicitar Alquiler'), ['tr12detalq/solicitar-orden', 'idOrden' => $model11->ido_11in,'esUsuario'=>false], [
             'class' => 'btn btn-success',
             'data' => [
               'confirm' => Yii::t('app', 'Esta seguro que desea solicitar este alquiler?'),
